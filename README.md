@@ -1,13 +1,1 @@
-Welcome! 
-
-This is a minimal example of a book based on R Markdown and **bookdown** (https://github.com/rstudio/bookdown). 
-
-This template provides a skeleton file structure that you can edit to create your book. 
-
-The contents inside the .Rmd files provide some pointers to help you get started, but feel free to also delete the content in each file and start fresh.
-
-Additional resources:
-
-The **bookdown** book: https://bookdown.org/yihui/bookdown/
-
-The **bookdown** package reference site: https://pkgs.rstudio.com/bookdown
+El presente trabajo, desarrollado en el marco del curso de Análisis de Series de Tiempo, se centrará en el estudio y pronóstico del flujo vehicular en las carreteras de California, Estados Unidos. Para ello, se utilizará la base de datos del Performance Measurement System (PeMS), un sistema robusto gestionado por el Departamento de Transporte de California (Caltrans). Este sistema recopila datos de tráfico en tiempo real, como flujo, velocidad promedio y ocupación de carriles, a través de una extensa red de sensores, ofreciendo un recurso invaluable para entender las dinámicas de la movilidad.
