@@ -1,0 +1,16 @@
+--- 
+title: "Análisis Series de Tiempo de un conjunto de datos de tráfico "
+author: "Juliana Campo, Ludwig Angel"
+date: "`r Sys.Date()`"
+site: bookdown::bookdown_site
+documentclass: book
+bibliography: [book.bib, packages.bib]
+description: |
+  Durante el curso de Análisis de Series de Tiempo se trabajará con una base de datos desarrollada por el Departamento de Transporte de California (Caltrans) a través del software conocido como Performance Measurement System (PeMS). En esta base de datos se recopila información de forma continua, registrando los datos del tráfico vehicular a través de sensores instalados en diferentes vías de California, US. 
+link-citations: yes
+github-repo: g6seriesdetiempo-ux/PEMSTrafficdata
+---
+
+# Acerca
+
+Durante el curso de Análisis de Series de Tiempo se trabajará con una base de datos desarrollada por el Departamento de Transporte de California (Caltrans) a través del software conocido como Performance Measurement System (PeMS). En esta base de datos se recopila información de forma continua, registrando los datos del tráfico vehicular a través de sensores instalados en diferentes vías de California, US. 

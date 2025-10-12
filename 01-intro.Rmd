@@ -1,0 +1,22 @@
+# Introducción
+
+El presente trabajo, desarrollado en el marco del curso de Análisis de Series de Tiempo, se centrará en el estudio y pronóstico del flujo vehicular en las carreteras de California, Estados Unidos. Para ello, se utilizará la base de datos del Performance Measurement System (PeMS), un sistema robusto gestionado por el Departamento de Transporte de California (Caltrans). Este sistema recopila datos de tráfico en tiempo real, como flujo, velocidad promedio y ocupación de carriles, a través de una extensa red de sensores, ofreciendo un recurso invaluable para entender las dinámicas de la movilidad.
+
+## Conjunto de Datos Flujo Vehicular
+La elección de analizar el flujo vehicular responde a su importancia crítica como indicador directo de la congestión y la eficiencia de las redes viales. El pronóstico preciso de esta variable ofrece un valor agregado significativo, ya que permite anticipar picos de tráfico, en días y horas especificas. 
+
+Esta capacidad predictiva es fundamental para una gestión proactiva de la movilidad urbana. Por ejemplo, al prever una alta congestión, las autoridades de tránsito pueden tomar decisiones informadas, como:
+
+* **Implementar desvíos temporales para redistribuir el tráfico.**
+
+* **Ajustar la sincronización de los semáforos en tiempo real para optimizar el flujo.**
+
+* **Informar a los conductores a través de aplicaciones de navegación y paneles de mensaje variable, permitiéndoles elegir rutas alternativas y reducir sus tiempos de viaje.**
+
+A largo plazo, el análisis de estos patrones históricos puede guiar la planificación de infraestructura vial y el desarrollo de políticas de transporte más sostenibles y eficientes.
+
+## Fuentes y Permisos de Uso
+
+* **Fuente de Datos:** La información será obtenida directamente del portal oficial del Performance Measurement System (PeMS) de Caltrans.
+
+* **Permisos de Uso:** Los datos proporcionados por PeMS son de dominio público y están disponibles para fines de investigación y análisis, tal como se especifica en su portal. No se requiere ningún permiso especial para su utilización en este proyecto académico, garantizando así un acceso abierto y transparente a la información.
