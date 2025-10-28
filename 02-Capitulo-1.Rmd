@@ -1,1 +1,288 @@
-# Capitulo 1
+# Capitulo 1 :  Visualización y Análisis Exploratorio de Datos
+
+Para el desarrollo del proyecto se decidió analizar el flujo vehicular a partir del dataset obtenido del PeMS, tal como se mencionó previamente. En particular, se trabajará con data del 01 de enero al 31 de mayo del 2025, recolectada en el distrito 5 del estado de California, Estados Unidos.
+Una vez determinado el conjunto de datos, se llevó a cabo la exploración visual de las variables más relevantes para el estudio, con el propósito de identificar patrones de comportamiento y posibles tendencias del dataset, que permitirán analizar el tráfico vehicular en la zona.
+
+
+El análisis se centra en identificar patrones temporales, la distribución de la velocidad y la relación fundamental entre el flujo y la velocidad.
+
+## Preprocesamiento de Datos de Series Temporales de Tráfico
+
+
+## Integración y Estructuración de Datos
+
+###  Concatenación de Archivos
+
+Se procesaron **151 archivos CSV** del sistema PeMS.
+
+* **Registros Totales:** $24,775,229$
+* **Granularidad Temporal Original:** $\Delta t = 5$ minutos
+
+### 2 Estandarización de Cabeceras
+
+Se implementó un esquema estructurado de $K = 52$ variables, organizadas jerárquicamente:
+
+* **Variables de Estación Base ($12$):** Métricas agregadas a nivel de detector (e.g., `timestamp`, identificadores, `TotalFlow`, `AvgSpeed`, `AvgOccupancy`).
+* **Variables Desagregadas por Carril ($40$):** Mediciones individuales para hasta $8$ carriles (e.g., muestras, flujo, ocupación, velocidad, estado de observación).
+
+
+
+## Diagnóstico y Limpieza de Datos
+
+### B Análisis del Mecanismo de Datos Faltantes (MDM)
+
+**Variable Crítica:** `AvgSpeed` (velocidad promedio, variable de respuesta principal).
+
+#### Estadísticas de Ausencia
+* **Tasa Global de Missings:** $25.28\%$ ($6,263,988$ de $24,775,229$ observaciones)
+* **Distribución Temporal:** Uniforme entre 2h y 15h (25.3% constante).
+* **Test de Aleatoriedad:** $\chi^2$ de uniformidad, $p = 1.0000$.
+
+### Clasificación del Mecanismo
+El test Chi-cuadrado con $p = 1.0000$ indica que los datos faltantes son consistentes con el mecanismo **MCAR (Missing Completely At Random)**:
+
+$$
+P(\text{Missing} \mid Y_{\text{obs}}, Y_{\text{miss}}, \psi) = P(\text{Missing} \mid \psi)
+$$
+
+donde la probabilidad de ausencia es independiente de los valores observados ($Y_{\text{obs}}$) y no observados ($Y_{\text{miss}}$).
+
+
+
+### Estrategias de Filtrado
+
+**Filtrado Primario: Validez de Variable Objetivo**
+
+* **Criterio:** Eliminar observaciones donde `AvgSpeed = NaN`.
+* **Observaciones Eliminadas:** $6,263,988$ ($25.28\%$).
+* **Justificación:** Consistente con el mecanismo MCAR para obtener estimaciones insesgadas.
+* **Implicación Práctica:** Retención del **$74.72\%$** de observaciones originales.
+
+
+### Sesgo Residual Potencial
+Aunque el test indica MCAR para la variable $AvgSpeed$, el filtrado por calidad puede introducir un sesgo si la falla de los sensores se correlaciona con **condiciones de tráfico extremas** (ej. accidentes, clima adverso). Este sesgo no fue cuantificado.
+
+
+## Agregación Temporal y Reducción Dimensional
+
+###  Transformación de Granularidad Temporal
+
+**Operación:** Agregación de datos de **5 minutos** a **resolución horaria** mediante *downsampling* determinístico.
+
+$$
+\mathbf{X}^{(1h)}_T = \frac{1}{n_T} \sum_{i=1}^{n_T} \mathbf{X}^{(5\text{min})}_{T,i}
+$$
+
+Donde $n_T$ es el número de observaciones válidas en el intervalo horario ($n_T \leq 12$). La media excluye valores $\text{NaN}$ (`skipna=True`).
+
+### Estadísticas de Agregación
+* **Intervalos Horarios Generados:** $3,624$
+* **Intervalos Descartados:** $72$ ($1.99\%$)
+* **Criterio de Suficiencia:** Se requirió un mínimo de $n_T \geq 3$ observaciones válidas de 12 posibles ($25\%$) para que el agregado horario se considerara representativo.
+* **Intervalos con Datos Suficientes:** $3,552$ ($98.01\%$)
+
+### Evaluación Estadística: Media vs. Mediana
+
+Las series temporales de tráfico exhiben **distribuciones altamente asimétricas**. Se compararon los estadísticos de tendencia central (media vs. mediana) para determinar el más robusto.
+
+### Resultados de Asimetría ($\gamma_1$) (Datos 5-min)
+
+| Variable | Asimetría ($\gamma_1$) | Interpretación | Estadístico Recomendado |
+| :--- | :--- | :--- | :--- |
+| `AvgSpeed` | $-4.923$ | Asimetría negativa severa (cola izquierda extendida) | Mediana |
+| `TotalFlow` | $0.998$ | Asimetría positiva moderada | Mediana |
+| `AvgOccupancy` | $3.082$ | Asimetría positiva severa | Mediana |
+
+**Criterio de Fisher:** Para distribuciones con $|\gamma_1| > 1$, la **mediana** es un estimador de tendencia central **más robusto** que la media.
+
+### Diferencias Empíricas (Agregados Horarios)
+
+* **`AvgSpeed`:** Media - Mediana = $-1.224 \text{ mph}$. La media es sistemáticamente menor que la mediana, indicando la presencia de eventos de **baja velocidad extrema** (congestión).
+* **`TotalFlow`:** Media - Mediana = $4.773$ vehículos/hora. La media es mayor que la mediana, reflejando **picos de flujo esporádicos**.
+* **`AvgOccupancy`:** Media - Mediana = $0.004$. Diferencia mínima en magnitud absoluta, a pesar de la alta asimetría.
+
+## Limitaciones y Supuestos
+
+###  Supuestos Implícitos
+
+* **Homogeneidad Intra-horaria:** La agregación asume estabilidad en los patrones de tráfico dentro de cada hora. Este supuesto se viola en las **transiciones de hora pico** (6-7 AM, 5-6 PM) y durante **eventos inesperados**.
+* **Independencia de Observaciones:** Se asume que las mediciones de 5 minutos son intercambiables, ignorando la **autocorrelación temporal** de corto plazo.
+* **Representatividad de Sensores:** Se asume que los sensores activos ($PctObserved > 50\%$) son representativos del estado global de la vía, lo cual no fue verificado empíricamente.
+
+### Pérdidas de Información Documentadas
+
+La agregación temporal resultó en la eliminación completa de:
+* **Variabilidad intra-horaria:** (ej. picos de 5 minutos dentro de una hora valle).
+* **Eventos de corta duración:** Accidentes o congestiones con duración menor a 1 hora.
+* **Dinámica de Transición:** Cambios rápidos entre los estados de tráfico (flujo libre $\leftrightarrow$ congestión).
+
+### Sesgos No Cuantificados
+
+* **Sesgo de Supervivencia del Sensor:** Potencial sesgo si los sensores fallan preferentemente bajo condiciones de tráfico adversas.
+* **Sesgo Espacial:** No se evaluó la representatividad geográfica de las estaciones debido a la falta de información de ubicación.
+* **Sesgo Temporal:** No se evaluó la potencial variación estacional (sin información del período temporal cubierto).
+
+
+```{r, echo=FALSE, message=FALSE, warning = FALSE}
+# Cargar librerías necesarias
+library(tidyverse)
+library(lubridate)
+library(ggplot2)
+library(plotly)
+library(scales)
+library(knitr)
+
+# Definir la ruta del archivo CSV (usando el nombre del archivo subido)
+data_file <- "./data/hourly_aggregated_data.csv"
+
+# Cargar los datos
+data_raw <- read_csv(data_file)
+
+# Limpieza y preparación de datos
+data_clean <- data_raw %>%
+  # Renombrar columnas para usar nombres en español en el código R
+  rename(
+    Timestamp = Timestamp,
+    FlujoTotal = TotalFlow,
+    VelocidadPromedio = AvgSpeed
+  ) %>%
+  # Convertir la columna de tiempo a formato datetime
+  mutate(
+    Timestamp = ymd_hms(Timestamp),
+    # Asegurar que las variables clave sean numéricas y manejar posibles NAs
+    FlujoTotal = as.numeric(FlujoTotal),
+    VelocidadPromedio = as.numeric(VelocidadPromedio),
+    # Extraer variables temporales para el análisis
+    Hora = hour(Timestamp)
+  ) %>%
+  # Seleccionar solo las columnas necesarias y eliminar NAs en variables clave
+  select(Timestamp, FlujoTotal, VelocidadPromedio, Hora) %>%
+  drop_na(FlujoTotal, VelocidadPromedio)
+
+cat("Estructura de la Serie Temporal Horaria:\n")
+str(data_clean)
+
+cat("\nPrimeras 6 Observaciones:\n")
+data_clean %>% 
+  head() %>% 
+  kable(caption = "Head del DataFrame Horario Agregado", format = "markdown")
+```
+
+## Comportamiento del flujo vehicular en el tiempo
+
+A continuación, se muestra el comportamiento del flujo vehicular promedio por hora a lo largo del tiempo. En el gráfico se evidencia un patrón repetitivo que refleja una posible estacionalidad diaria, con picos de flujo que se mantienen constantes durante todo el periodo; lo cual indica que el flujo vehicular no tiende a ser aleatorio, sino que, por el contrario, representa un patrón regular que será analizado posteriormente.
+
+```{r,echo=FALSE, message=FALSE, warning = FALSE}
+# Gráfico de la serie temporal del flujo total
+p_flow_ts <- data_clean %>%
+  ggplot(aes(x = Timestamp, y = FlujoTotal)) +
+  geom_line(color = "#4a8a83", alpha = 0.8) +
+  labs(
+    title = "Comportamiento del Flujo Vehicular Promedio por Hora",
+    x = "Fecha y Hora",
+    y = "Flujo Vehicular Total Promedio"
+  ) +
+  theme_minimal(base_size = 14) +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold"))
+
+# Convertir a plotly para interactividad
+ggplotly(p_flow_ts)
+
+  
+```
+
+* **Patrón de Estacionalidad Diaria (Flujo Promedio por Hora del Día)**
+Para confirmar la estacionalidad diaria, se calcula y grafica el flujo promedio para cada una de las 24 horas del día.
+```{r,echo=FALSE, message=FALSE, warning = FALSE}
+# Cálculo del flujo promedio por hora del día para visualizar la estacionalidad diaria
+daily_pattern <- data_clean %>%
+  group_by(Hora) %>%
+  summarise(
+    FlujoPromedio = mean(FlujoTotal, na.rm = TRUE),
+    .groups = 'drop'
+  )
+
+# Gráfico del patrón diario
+p_daily_pattern <- daily_pattern %>%
+  ggplot(aes(x = Hora, y = FlujoPromedio)) +
+  geom_line(color = "#33a02c", size = 1.5) +
+  geom_point(color = "#33a02c", size = 4) +
+  scale_x_continuous(breaks = seq(0, 23, by = 2)) +
+  labs(
+    title = "Estacionalidad Diaria: Flujo Vehicular Promedio por Hora",
+    x = "Hora del Día (0 a 23)",
+    y = "Flujo Promedio"
+  ) +
+  theme_minimal(base_size = 14) +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold"))
+
+# Convertir a plotly para interactividad
+ggplotly(p_daily_pattern)
+```
+
+## Distribución de la velocidad promedio por hora
+
+En el siguiente histograma se evidencia la distribución de la velocidad promedio por hora expresada en millas por hora, donde el eje vertical representa la frecuencia de horas registradas para cada rango de velocidad. Se observa que la mayor concentración de frecuencias corresponde a una velocidad promedio aproximadamente entre 65 mph y 67 mph, presentando el pico máximo de frecuencia entre estas velocidades.
+A partir del gráfico puede deducirse también que hay una baja frecuencia para velocidades por debajo de 62mph, lo cual podría significar que el tráfico a lo largo del distrito 5 es generalmente fluido. Además, se logra percibir que el histograma muestra una distribución asimétrica, lo cual significa que a pesar de haber una mayor frecuencia de horas con una velocidad promedio superior a 65mph, hay algunas horas con velocidades más bajas que podrían corresponder a zonas o momentos del día con mayor congestión vehicular.
+
+```{r,echo=FALSE, message=FALSE, warning = FALSE}
+# Histograma de la velocidad promedio
+p_speed_hist <- data_clean %>%
+  ggplot(aes(x = VelocidadPromedio)) +
+  geom_histogram(
+    aes(y = after_stat(count)), # Usar count en el eje Y (frecuencia de horas)
+    binwidth = 1, # Un binwidth de 1 mph
+    fill = "#f67e7d",
+    color = "white"
+  ) +
+  labs(
+    title = "Distribución de la Velocidad Promedio por Hora (mph)",
+    x = "Velocidad Promedio (mph)",
+    y = "Frecuencia de Horas Registradas"
+  ) +
+  geom_vline(
+    xintercept = mean(data_clean$VelocidadPromedio), 
+    linetype = "dashed", 
+    color = "#e31a1c", 
+    size = 1
+  ) +
+  geom_text(
+    x = mean(data_clean$VelocidadPromedio) + 1, 
+    y = max(ggplot_build(data_clean %>% ggplot(aes(x = VelocidadPromedio)) + geom_histogram(binwidth = 1))$data[[1]]$count) * 0.9, 
+    label = paste("Media:", round(mean(data_clean$VelocidadPromedio), 2), "mph"),
+    color = "#e31a1c"
+  ) +
+  theme_minimal(base_size = 14) +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold"))
+
+# Convertir a plotly para interactividad
+ggplotly(p_speed_hist)
+
+
+```
+
+## Diagrama de dispersión del flujo vehicular vs velocidad promedio
+Con el objetivo de visualizar la relación entre el flujo promedio horario y la velocidad promedio, se realizó el siguiente diagrama de dispersión, donde se muestra la cantidad promedio de vehículos que pasan por la estación en una hora específica del día y la velocidad promedio por hora registrada.
+```{r,echo=FALSE, message=FALSE, warning = FALSE}
+# Diagrama de dispersión: Velocidad vs Flujo
+p_scatter <- data_clean %>%
+  ggplot(aes(x = FlujoTotal, y = VelocidadPromedio)) +
+  geom_point(
+    aes(color = VelocidadPromedio), # Colorear por velocidad para visualizar densidad
+    alpha = 0.6, 
+    size = 2
+  ) +
+  scale_color_viridis_c(option = "plasma", direction = -1) + # Usar una escala de color adecuada
+  labs(
+    title = "Diagrama de Dispersión: Flujo Vehicular vs. Velocidad Promedio",
+    x = "Flujo Vehicular Total Promedio",
+    y = "Velocidad Promedio (mph)",
+    color = "Velocidad (mph)"
+  ) +
+  theme_minimal(base_size = 14) +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold"))
+
+# Convertir a plotly para interactividad
+ggplotly(p_scatter)
+```
+
