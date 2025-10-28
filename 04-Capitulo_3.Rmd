@@ -1,0 +1,150 @@
+# Capítulo  3
+
+## Descomposición de la Serie Temporal
+Dado que la variable FlujoTotal presenta una clara estructura temporal y estacionalidad diaria, es necesario realizar un análisis de series temporales para descomponer sus componentes, evaluar su estacionariedad y, si es necesario, aplicar transformaciones para prepararla para el modelado predictivo
+
+La descomposición permite separar la serie en sus componentes principales: Tendencia, Estacionalidad e Irregularidad (ruido o error). Utilizamos el método STL (Seasonal-Trend decomposition using Loess), que es robusto a valores atípicos.La descomposición permite separar la serie en sus componentes principales: Tendencia, Estacionalidad e Irregularidad (ruido o error). Utilizamos el método STL (Seasonal-Trend decomposition using Loess), que es robusto a valores atípicos.
+
+La descomposición es vital para entender la naturaleza de los picos y valles observados en el Capítulo anterior y para confirmar si la variabilidad del ruido es constante a lo largo del tiempo.
+
+```{r, echo=FALSE, message=FALSE, warning = FALSE}
+# Cargar librerías necesarias
+library(tidyverse)
+library(lubridate)
+library(ggplot2)
+library(plotly)
+library(scales)
+library(knitr)
+library(tseries)
+library(seastests)
+library(uroot )
+
+# Definir la ruta del archivo CSV (usando el nombre del archivo subido)
+data_file <- "./data/hourly_aggregated_data.csv"
+
+# Cargar los datos
+data_raw <- read_csv(data_file)
+
+# Limpieza y preparación de datos
+data_clean <- data_raw %>%
+  # Renombrar columnas para usar nombres en español en el código R
+  rename(
+    Timestamp = Timestamp,
+    FlujoTotal = TotalFlow,
+    VelocidadPromedio = AvgSpeed
+  ) %>%
+  # Convertir la columna de tiempo a formato datetime
+  mutate(
+    Timestamp = ymd_hms(Timestamp),
+    # Asegurar que las variables clave sean numéricas y manejar posibles NAs
+    FlujoTotal = as.numeric(FlujoTotal),
+    VelocidadPromedio = as.numeric(VelocidadPromedio),
+    # Extraer variables temporales para el análisis
+    Hora = hour(Timestamp)
+  ) %>%
+  # Seleccionar solo las columnas necesarias y eliminar NAs en variables clave
+  select(Timestamp, FlujoTotal, VelocidadPromedio, Hora) %>%
+  drop_na(FlujoTotal, VelocidadPromedio)
+
+# 1. Convertir el Flujo Total en un objeto de serie de tiempo (ts)
+# La frecuencia es 24, asumiendo una estacionalidad diaria fuerte
+flujo_ts <- ts(data_clean$FlujoTotal, frequency = 24)
+
+# 2. Descomposición de la serie de tiempo usando STL
+# s.window="periodic" asume que el patrón estacional es constante.
+flujo_stl <- stl(flujo_ts, s.window = "periodic")
+
+# 3. Visualizar la descomposición
+plot(flujo_stl, main = "Descomposición STL del Flujo Vehicular Total")
+
+```
+
+
+Estacional: Muestra claramente el patrón diario consistente, con flujos altos en horas pico de la mañana y la tarde.
+
+Tendencia: Muestra una ligera variación a largo plazo. Si bien no hay una tendencia lineal fuerte, la componente no es completamente plana.
+
+Residual: Representa el componente irregular o ruido, que debería ser estacionario. Su magnitud parece ser relativamente constante, lo que simplifica el siguiente paso.
+
+La descomposición STL revela una serie con fuerte componente estacional determinística y una tendencia suave pero significativa. El principal desafío estadístico es la heterocedasticidad residual, especialmente en el primer segmento de la serie. Esto sugiere que un modelo efectivo debería:
+
+
+## Estacionariedad y Diferenciación
+
+Una serie de tiempo es estacionaria si sus propiedades estadísticas (media, varianza, autocovarianza) no cambian con el tiempo. La estacionariedad es un requisito fundamental para modelos como ARIMA. La fuerte estacionalidad y la ligera tendencia observadas sugieren que la serie NO es estacionaria.
+
+Se aplica la prueba de Dickey-Fuller Aumentada (ADF) a la serie temporal de interés (por ejemplo, velocidad promedio o flujo total) para evaluar la presencia de una raíz unitaria, que es un indicador de **no estacionariedad**.
+
+* **Hipótesis Nula ($H_0$):** La serie temporal NO es estacionaria (contiene una raíz unitaria).
+* **Hipótesis Alternativa ($H_a$):** La serie temporal ES estacionaria.
+
+
+```{r, echo=FALSE, message=FALSE, warning = FALSE}
+# Prueba ADF para la serie original
+adf_result <- adf.test(flujo_ts, alternative = "stationary")
+
+print("Resultado de la prueba de Dickey-Fuller Aumentada (ADF) para el Flujo Total:")
+print(adf_result)
+
+# Determinar si se requiere diferenciación
+es_estacionaria <- adf_result$p.value < 0.05
+
+
+```
+
+
+| Métrica | Valor |
+| :--- | :--- |
+| **Estadístico ADF** | `r round(adf_result$statistic, 2)` |
+| **Valor $p$** | `r round(adf_result$p.value, 4)` |
+| **Nivel de Significación ($\alpha$)** | $0.05$ |
+
+El **valor $p$ ($p$-value)** de la prueba ADF es `r round(adf_result$p.value, 4)`. Dado que este valor es **`r if(es_estacionaria) "menor" else "mayor"`** a $0.05$, **`r if(es_estacionaria) "rechazamos" else "no rechazamos"`** la hipótesis nula ($H_0$).
+
+
+### Test KPSS (Kwiatkowski-Phillips-Schmidt-Shin)
+
+La prueba KPSS es complementaria al ADF. Su hipótesis nula ($H_0$) es que la serie ES estacionaria (alrededor de un nivel o una tendencia). Un p-value muy bajo indica que la serie es no estacionaria (rechaza $H_0$).
+
+```{r, echo=FALSE, message=FALSE, warning = FALSE}
+# Complementario al ADF - H0: Serie ES estacionaria
+print("KPSS Test (Null: Estacionaria en Nivel):")
+kpss.test(flujo_ts, null = "Level")
+
+print("KPSS Test (Null: Estacionaria en Tendencia):")
+kpss.test(flujo_ts, null = "Trend")
+
+
+```
+
+
+Basándose en el rechazo de la $H_0$ del test KPSS (confirmando no-estacionariedad) y los picos persistentes en los lags estacionales (24, 48, 72) de la ACF, se confirma que la serie requiere Diferenciación Estacional ($D=1$, $s=24$) para remover la fuerte estacionalidad estocástica antes de la identificación del modelo SARIMA.
+
+
+
+### Diferenciación Estacional
+
+Para remover la estacionalidad diaria se aplica la diferenciación estacional.
+
+```{r, echo=FALSE, message=FALSE, warning = FALSE}
+# Aplicar diferenciación estacional (lag = 24) para remover la estacionalidad diaria
+flujo_diff_24 <- diff(flujo_ts, lag = 24)
+
+# Visualizar la serie después de la diferenciación estacional
+plot(flujo_diff_24, main = "Flujo Total después de Diferenciación Estacional (Lag 24)")
+
+# Prueba ADF para la serie estacionalmente diferenciada
+adf_diff_result <- adf.test(flujo_diff_24, alternative = "stationary")
+
+print("Resultado de la prueba ADF para la serie estacionalmente diferenciada:")
+print(adf_diff_result)
+
+```
+
+### Confirmación de Estacionariedad
+La batería de pruebas estadísticas aplicadas proporciona evidencia concluyente sobre el comportamiento estocástico de la serie. La prueba de Dickey-Fuller Aumentada (ADF) arrojó un estadístico de -29.143 con un valor p de 0.01, rechazando contundentemente la hipótesis nula de presencia de raíz unitaria. Este resultado, complementado por las pruebas KPSS que mostraron valores marginales (p-value = 0.05381 para nivel y 0.1 para tendencia), confirma que la serie original presenta características mixtas de estacionariedad.
+
+
+**La diferenciación estacional con lag 24** se estableció como la transformación necesaria y suficiente para lograr estacionariedad plena. Tras aplicar esta diferenciación, la serie transformada exhibió un estadístico ADF de -15.225 (p-value = 0.01), confirmando que la serie diferenciada cumple con los requisitos de estacionariedad para la aplicación de modelos ARIMA estacionales (SARIMA).
+
+
