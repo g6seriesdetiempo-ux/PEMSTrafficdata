@@ -23,7 +23,7 @@
 <meta name="author" content="Juliana Campo, Ludwig Angel" />
 
 
-<meta name="date" content="2025-10-11" />
+<meta name="date" content="2025-10-27" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -31,7 +31,7 @@
   
   
 <link rel="prev" href="index.html"/>
-<link rel="next" href="captilo-1.html"/>
+<link rel="next" href="visualización-y-análisis-exploratorio-de-datos.html"/>
 <script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
@@ -52,6 +52,14 @@
 <link href="libs/anchor-sections-1.1.0/anchor-sections.css" rel="stylesheet" />
 <link href="libs/anchor-sections-1.1.0/anchor-sections-hash.css" rel="stylesheet" />
 <script src="libs/anchor-sections-1.1.0/anchor-sections.js"></script>
+<link href="libs/htmltools-fill-0.5.8.1/fill.css" rel="stylesheet" />
+<script src="libs/htmlwidgets-1.6.4/htmlwidgets.js"></script>
+<script src="libs/plotly-binding-4.10.4/plotly.js"></script>
+<script src="libs/typedarray-0.1/typedarray.min.js"></script>
+<link href="libs/crosstalk-1.2.1/css/crosstalk.min.css" rel="stylesheet" />
+<script src="libs/crosstalk-1.2.1/js/crosstalk.min.js"></script>
+<link href="libs/plotly-htmlwidgets-css-2.11.1/plotly-htmlwidgets.css" rel="stylesheet" />
+<script src="libs/plotly-main-2.11.1/plotly-latest.min.js"></script>
 
 
 
@@ -82,9 +90,41 @@
 <li class="chapter" data-level="2.1" data-path="introducción.html"><a href="introducción.html"><i class="fa fa-check"></i><b>2.1</b> Conjunto de Datos Flujo Vehicular</a></li>
 <li class="chapter" data-level="2.2" data-path="introducción.html"><a href="introducción.html#fuentes-y-permisos-de-uso"><i class="fa fa-check"></i><b>2.2</b> Fuentes y Permisos de Uso</a></li>
 </ul></li>
-<li class="chapter" data-level="3" data-path="captilo-1.html"><a href="captilo-1.html"><i class="fa fa-check"></i><b>3</b> Captilo 1</a></li>
-<li class="chapter" data-level="4" data-path="capitulo-3.html"><a href="capitulo-3.html"><i class="fa fa-check"></i><b>4</b> Capitulo 3</a></li>
-<li class="chapter" data-level="5" data-path="capitulo4.html"><a href="capitulo4.html"><i class="fa fa-check"></i><b>5</b> Capitulo4</a></li>
+<li class="chapter" data-level="3" data-path="01-intro.html"><a href="#visualizaci%C3%B3n-y-an%C3%A1lisis-exploratorio-de-datos"><i class="fa fa-check"></i><b>3</b> Visualización y Análisis Exploratorio de Datos</a>
+<ul>
+<li class="chapter" data-level="3.1" data-path="01-intro.html"><a href="#preprocesamiento-de-datos-de-series-temporales-de-tr%C3%A1fico"><i class="fa fa-check"></i><b>3.1</b> Preprocesamiento de Datos de Series Temporales de Tráfico</a></li>
+<li class="chapter" data-level="3.2" data-path="01-intro.html"><a href="#integraci%C3%B3n-y-estructuraci%C3%B3n-de-datos"><i class="fa fa-check"></i><b>3.2</b> Integración y Estructuración de Datos</a>
+<ul>
+<li class="chapter" data-level="3.2.1" data-path="01-intro.html"><a href="#concatenaci%C3%B3n-de-archivos"><i class="fa fa-check"></i><b>3.2.1</b> Concatenación de Archivos</a></li>
+<li class="chapter" data-level="3.2.2" data-path="01-intro.html"><a href="#estandarizaci%C3%B3n-de-cabeceras"><i class="fa fa-check"></i><b>3.2.2</b> 2 Estandarización de Cabeceras</a></li>
+</ul></li>
+<li class="chapter" data-level="3.3" data-path="01-intro.html"><a href="#diagn%C3%B3stico-y-limpieza-de-datos"><i class="fa fa-check"></i><b>3.3</b> Diagnóstico y Limpieza de Datos</a>
+<ul>
+<li class="chapter" data-level="3.3.1" data-path="01-intro.html"><a href="#b-an%C3%A1lisis-del-mecanismo-de-datos-faltantes-mdm"><i class="fa fa-check"></i><b>3.3.1</b> B Análisis del Mecanismo de Datos Faltantes (MDM)</a></li>
+<li class="chapter" data-level="3.3.2" data-path="01-intro.html"><a href="#clasificaci%C3%B3n-del-mecanismo"><i class="fa fa-check"></i><b>3.3.2</b> Clasificación del Mecanismo</a></li>
+<li class="chapter" data-level="3.3.3" data-path="visualización-y-análisis-exploratorio-de-datos.html"><a href="visualización-y-análisis-exploratorio-de-datos.html"><i class="fa fa-check"></i><b>3.3.3</b> Estrategias de Filtrado</a></li>
+<li class="chapter" data-level="3.3.4" data-path="visualización-y-análisis-exploratorio-de-datos.html"><a href="visualización-y-análisis-exploratorio-de-datos.html#sesgo-residual-potencial"><i class="fa fa-check"></i><b>3.3.4</b> Sesgo Residual Potencial</a></li>
+</ul></li>
+<li class="chapter" data-level="3.4" data-path="01-intro.html"><a href="#agregaci%C3%B3n-temporal-y-reducci%C3%B3n-dimensional"><i class="fa fa-check"></i><b>3.4</b> Agregación Temporal y Reducción Dimensional</a>
+<ul>
+<li class="chapter" data-level="3.4.1" data-path="01-intro.html"><a href="#transformaci%C3%B3n-de-granularidad-temporal"><i class="fa fa-check"></i><b>3.4.1</b> Transformación de Granularidad Temporal</a></li>
+<li class="chapter" data-level="3.4.2" data-path="01-intro.html"><a href="#estad%C3%ADsticas-de-agregaci%C3%B3n"><i class="fa fa-check"></i><b>3.4.2</b> Estadísticas de Agregación</a></li>
+<li class="chapter" data-level="3.4.3" data-path="01-intro.html"><a href="#evaluaci%C3%B3n-estad%C3%ADstica-media-vs.-mediana"><i class="fa fa-check"></i><b>3.4.3</b> Evaluación Estadística: Media vs. Mediana</a></li>
+<li class="chapter" data-level="3.4.4" data-path="01-intro.html"><a href="#resultados-de-asimetr%C3%ADa-gamma_1-datos-5-min"><i class="fa fa-check"></i><b>3.4.4</b> Resultados de Asimetría (<span class="math inline">\(\gamma_1\)</span>) (Datos 5-min)</a></li>
+<li class="chapter" data-level="3.4.5" data-path="01-intro.html"><a href="#diferencias-emp%C3%ADricas-agregados-horarios"><i class="fa fa-check"></i><b>3.4.5</b> Diferencias Empíricas (Agregados Horarios)</a></li>
+</ul></li>
+<li class="chapter" data-level="3.5" data-path="visualización-y-análisis-exploratorio-de-datos.html"><a href="visualización-y-análisis-exploratorio-de-datos.html#limitaciones-y-supuestos"><i class="fa fa-check"></i><b>3.5</b> Limitaciones y Supuestos</a>
+<ul>
+<li class="chapter" data-level="3.5.1" data-path="01-intro.html"><a href="#supuestos-impl%C3%ADcitos"><i class="fa fa-check"></i><b>3.5.1</b> Supuestos Implícitos</a></li>
+<li class="chapter" data-level="3.5.2" data-path="01-intro.html"><a href="#p%C3%A9rdidas-de-informaci%C3%B3n-documentadas"><i class="fa fa-check"></i><b>3.5.2</b> Pérdidas de Información Documentadas</a></li>
+<li class="chapter" data-level="3.5.3" data-path="visualización-y-análisis-exploratorio-de-datos.html"><a href="visualización-y-análisis-exploratorio-de-datos.html#sesgos-no-cuantificados"><i class="fa fa-check"></i><b>3.5.3</b> Sesgos No Cuantificados</a></li>
+</ul></li>
+<li class="chapter" data-level="3.6" data-path="visualización-y-análisis-exploratorio-de-datos.html"><a href="visualización-y-análisis-exploratorio-de-datos.html#comportamiento-del-flujo-vehicular-en-el-tiempo"><i class="fa fa-check"></i><b>3.6</b> Comportamiento del flujo vehicular en el tiempo</a></li>
+<li class="chapter" data-level="3.7" data-path="01-intro.html"><a href="#distribuci%C3%B3n-de-la-velocidad-promedio-por-hora"><i class="fa fa-check"></i><b>3.7</b> Distribución de la velocidad promedio por hora</a></li>
+<li class="chapter" data-level="3.8" data-path="01-intro.html"><a href="#diagrama-de-dispersi%C3%B3n-del-flujo-vehicular-vs-velocidad-promedio"><i class="fa fa-check"></i><b>3.8</b> Diagrama de dispersión del flujo vehicular vs velocidad promedio</a></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="capitulo-2.html"><a href="capitulo-2.html"><i class="fa fa-check"></i><b>4</b> Capitulo 2</a></li>
+<li class="chapter" data-level="5" data-path="capitulo-4.html"><a href="capitulo-4.html"><i class="fa fa-check"></i><b>5</b> Capitulo 4</a></li>
 <li class="divider"></li>
 <li><a href="https://github.com/g6seriesdetiempo-ux/PEMSTrafficdata" target="blank">Published with bookdown</a></li>
 
@@ -134,7 +174,7 @@
         </div>
       </div>
 <a href="index.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
-<a href="captilo-1.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+<a href="visualización-y-análisis-exploratorio-de-datos.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>
@@ -188,6 +228,20 @@ gitbook.start({
 });
 </script>
 
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/latest.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
 </body>
 
 </html>
