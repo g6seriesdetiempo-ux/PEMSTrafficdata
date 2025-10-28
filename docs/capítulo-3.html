@@ -160,7 +160,7 @@
 <p>Dado que la variable FlujoTotal presenta una clara estructura temporal y estacionalidad diaria, es necesario realizar un análisis de series temporales para descomponer sus componentes, evaluar su estacionariedad y, si es necesario, aplicar transformaciones para prepararla para el modelado predictivo</p>
 <p>La descomposición permite separar la serie en sus componentes principales: Tendencia, Estacionalidad e Irregularidad (ruido o error). Utilizamos el método STL (Seasonal-Trend decomposition using Loess), que es robusto a valores atípicos.La descomposición permite separar la serie en sus componentes principales: Tendencia, Estacionalidad e Irregularidad (ruido o error). Utilizamos el método STL (Seasonal-Trend decomposition using Loess), que es robusto a valores atípicos.</p>
 <p>La descomposición es vital para entender la naturaleza de los picos y valles observados en el Capítulo anterior y para confirmar si la variabilidad del ruido es constante a lo largo del tiempo.</p>
-<p><img src="_main_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
+<p><img src="my_gitbook_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
 <p>Estacional: Muestra claramente el patrón diario consistente, con flujos altos en horas pico de la mañana y la tarde.</p>
 <p>Tendencia: Muestra una ligera variación a largo plazo. Si bien no hay una tendencia lineal fuerte, la componente no es completamente plana.</p>
 <p>Residual: Representa el componente irregular o ruido, que debería ser estacionario. Su magnitud parece ser relativamente constante, lo que simplifica el siguiente paso.</p>
@@ -224,7 +224,7 @@
 <div id="diferenciación-estacional" class="section level3 hasAnchor" number="4.2.2">
 <h3><span class="header-section-number">4.2.2</span> Diferenciación Estacional<a href="#diferenciaci%C3%B3n-estacional" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p>Para remover la estacionalidad diaria se aplica la diferenciación estacional.</p>
-<p><img src="_main_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
+<p><img src="my_gitbook_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
 <pre><code>## [1] &quot;Resultado de la prueba ADF para la serie estacionalmente diferenciada:&quot;</code></pre>
 <pre><code>## 
 ##  Augmented Dickey-Fuller Test
@@ -289,7 +289,7 @@ gitbook.start({
     "link": null,
     "text": null
   },
-  "download": ["_main.pdf", "_main.epub"],
+  "download": ["my_gitbook.pdf", "my_gitbook.epub"],
   "search": {
     "engine": "fuse",
     "options": null
