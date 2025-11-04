@@ -33,3 +33,10 @@ estacionariedad-y-diferenciación
 test-kpss-kwiatkowski-phillips-schmidt-shin
 diferenciación-estacional
 confirmación-de-estacionariedad
+capítulo-4
+fundamentación-metodológica
+modelos-aditivos-vs.-multiplicativos
+estimación-del-modelo
+confirmación-cuantitativa-de-la-estacionalidad
+nivel1-operadores-estacionales
+nivel2-operadores-no-estacionales

@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>5 Capítulo 4 | Análisis Series de Tiempo de un conjunto de datos de tráfico</title>
+  <meta name="description" content="Durante el curso de Análisis de Series de Tiempo se trabajará con una base de datos desarrollada por el Departamento de Transporte de California (Caltrans) a través del software conocido como Performance Measurement System (PeMS). En esta base de datos se recopila información de forma continua, registrando los datos del tráfico vehicular a través de sensores instalados en diferentes vías de California, US." />
+  <meta name="generator" content="bookdown 0.42 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="5 Capítulo 4 | Análisis Series de Tiempo de un conjunto de datos de tráfico" />
+  <meta property="og:type" content="book" />
+  
+  <meta property="og:description" content="Durante el curso de Análisis de Series de Tiempo se trabajará con una base de datos desarrollada por el Departamento de Transporte de California (Caltrans) a través del software conocido como Performance Measurement System (PeMS). En esta base de datos se recopila información de forma continua, registrando los datos del tráfico vehicular a través de sensores instalados en diferentes vías de California, US." />
+  <meta name="github-repo" content="g6seriesdetiempo-ux/PEMSTrafficdata" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="5 Capítulo 4 | Análisis Series de Tiempo de un conjunto de datos de tráfico" />
+  
+  <meta name="twitter:description" content="Durante el curso de Análisis de Series de Tiempo se trabajará con una base de datos desarrollada por el Departamento de Transporte de California (Caltrans) a través del software conocido como Performance Measurement System (PeMS). En esta base de datos se recopila información de forma continua, registrando los datos del tráfico vehicular a través de sensores instalados en diferentes vías de California, US." />
+  
+
+<meta name="author" content="Juliana Campo, Ludwig Angel" />
+
+
+<meta name="date" content="2025-11-03" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="capítulo-3.html"/>
+
+<script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+<link href="libs/anchor-sections-1.1.0/anchor-sections.css" rel="stylesheet" />
+<link href="libs/anchor-sections-1.1.0/anchor-sections-hash.css" rel="stylesheet" />
+<script src="libs/anchor-sections-1.1.0/anchor-sections.js"></script>
+<link href="libs/htmltools-fill-0.5.8.1/fill.css" rel="stylesheet" />
+<script src="libs/htmlwidgets-1.6.4/htmlwidgets.js"></script>
+<script src="libs/plotly-binding-4.10.4/plotly.js"></script>
+<script src="libs/typedarray-0.1/typedarray.min.js"></script>
+<link href="libs/crosstalk-1.2.1/css/crosstalk.min.css" rel="stylesheet" />
+<script src="libs/crosstalk-1.2.1/js/crosstalk.min.js"></script>
+<link href="libs/plotly-htmlwidgets-css-2.11.1/plotly-htmlwidgets.css" rel="stylesheet" />
+<script src="libs/plotly-main-2.11.1/plotly-latest.min.js"></script>
+
+
+
+<style type="text/css">
+  
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+</style>
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./">Análisis Series de Tiempo de un conjunto de datos de tráfico</a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> Acerca</a></li>
+<li class="chapter" data-level="2" data-path="04-Capitulo_4.html"><a href="#introducci%C3%B3n"><i class="fa fa-check"></i><b>2</b> Introducción</a>
+<ul>
+<li class="chapter" data-level="2.1" data-path="introducción.html"><a href="introducción.html"><i class="fa fa-check"></i><b>2.1</b> Conjunto de Datos Flujo Vehicular</a></li>
+<li class="chapter" data-level="2.2" data-path="introducción.html"><a href="introducción.html#fuentes-y-permisos-de-uso"><i class="fa fa-check"></i><b>2.2</b> Fuentes y Permisos de Uso</a></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="04-Capitulo_4.html"><a href="#visualizaci%C3%B3n-y-an%C3%A1lisis-exploratorio-de-datos"><i class="fa fa-check"></i><b>3</b> Visualización y Análisis Exploratorio de Datos</a>
+<ul>
+<li class="chapter" data-level="3.1" data-path="04-Capitulo_4.html"><a href="#preprocesamiento-de-datos-de-series-temporales-de-tr%C3%A1fico"><i class="fa fa-check"></i><b>3.1</b> Preprocesamiento de Datos de Series Temporales de Tráfico</a></li>
+<li class="chapter" data-level="3.2" data-path="04-Capitulo_4.html"><a href="#integraci%C3%B3n-y-estructuraci%C3%B3n-de-datos"><i class="fa fa-check"></i><b>3.2</b> Integración y Estructuración de Datos</a>
+<ul>
+<li class="chapter" data-level="3.2.1" data-path="04-Capitulo_4.html"><a href="#concatenaci%C3%B3n-de-archivos"><i class="fa fa-check"></i><b>3.2.1</b> Concatenación de Archivos</a></li>
+<li class="chapter" data-level="3.2.2" data-path="04-Capitulo_4.html"><a href="#estandarizaci%C3%B3n-de-cabeceras"><i class="fa fa-check"></i><b>3.2.2</b> 2 Estandarización de Cabeceras</a></li>
+</ul></li>
+<li class="chapter" data-level="3.3" data-path="04-Capitulo_4.html"><a href="#diagn%C3%B3stico-y-limpieza-de-datos"><i class="fa fa-check"></i><b>3.3</b> Diagnóstico y Limpieza de Datos</a>
+<ul>
+<li class="chapter" data-level="3.3.1" data-path="04-Capitulo_4.html"><a href="#b-an%C3%A1lisis-del-mecanismo-de-datos-faltantes-mdm"><i class="fa fa-check"></i><b>3.3.1</b> B Análisis del Mecanismo de Datos Faltantes (MDM)</a></li>
+<li class="chapter" data-level="3.3.2" data-path="04-Capitulo_4.html"><a href="#clasificaci%C3%B3n-del-mecanismo"><i class="fa fa-check"></i><b>3.3.2</b> Clasificación del Mecanismo</a></li>
+<li class="chapter" data-level="3.3.3" data-path="visualización-y-análisis-exploratorio-de-datos.html"><a href="visualización-y-análisis-exploratorio-de-datos.html"><i class="fa fa-check"></i><b>3.3.3</b> Estrategias de Filtrado</a></li>
+<li class="chapter" data-level="3.3.4" data-path="visualización-y-análisis-exploratorio-de-datos.html"><a href="visualización-y-análisis-exploratorio-de-datos.html#sesgo-residual-potencial"><i class="fa fa-check"></i><b>3.3.4</b> Sesgo Residual Potencial</a></li>
+</ul></li>
+<li class="chapter" data-level="3.4" data-path="04-Capitulo_4.html"><a href="#agregaci%C3%B3n-temporal-y-reducci%C3%B3n-dimensional"><i class="fa fa-check"></i><b>3.4</b> Agregación Temporal y Reducción Dimensional</a>
+<ul>
+<li class="chapter" data-level="3.4.1" data-path="04-Capitulo_4.html"><a href="#transformaci%C3%B3n-de-granularidad-temporal"><i class="fa fa-check"></i><b>3.4.1</b> Transformación de Granularidad Temporal</a></li>
+<li class="chapter" data-level="3.4.2" data-path="04-Capitulo_4.html"><a href="#estad%C3%ADsticas-de-agregaci%C3%B3n"><i class="fa fa-check"></i><b>3.4.2</b> Estadísticas de Agregación</a></li>
+<li class="chapter" data-level="3.4.3" data-path="04-Capitulo_4.html"><a href="#evaluaci%C3%B3n-estad%C3%ADstica-media-vs.-mediana"><i class="fa fa-check"></i><b>3.4.3</b> Evaluación Estadística: Media vs. Mediana</a></li>
+<li class="chapter" data-level="3.4.4" data-path="04-Capitulo_4.html"><a href="#resultados-de-asimetr%C3%ADa-gamma_1-datos-5-min"><i class="fa fa-check"></i><b>3.4.4</b> Resultados de Asimetría (<span class="math inline">\(\gamma_1\)</span>) (Datos 5-min)</a></li>
+<li class="chapter" data-level="3.4.5" data-path="04-Capitulo_4.html"><a href="#diferencias-emp%C3%ADricas-agregados-horarios"><i class="fa fa-check"></i><b>3.4.5</b> Diferencias Empíricas (Agregados Horarios)</a></li>
+</ul></li>
+<li class="chapter" data-level="3.5" data-path="visualización-y-análisis-exploratorio-de-datos.html"><a href="visualización-y-análisis-exploratorio-de-datos.html#limitaciones-y-supuestos"><i class="fa fa-check"></i><b>3.5</b> Limitaciones y Supuestos</a>
+<ul>
+<li class="chapter" data-level="3.5.1" data-path="04-Capitulo_4.html"><a href="#supuestos-impl%C3%ADcitos"><i class="fa fa-check"></i><b>3.5.1</b> Supuestos Implícitos</a></li>
+<li class="chapter" data-level="3.5.2" data-path="04-Capitulo_4.html"><a href="#p%C3%A9rdidas-de-informaci%C3%B3n-documentadas"><i class="fa fa-check"></i><b>3.5.2</b> Pérdidas de Información Documentadas</a></li>
+<li class="chapter" data-level="3.5.3" data-path="visualización-y-análisis-exploratorio-de-datos.html"><a href="visualización-y-análisis-exploratorio-de-datos.html#sesgos-no-cuantificados"><i class="fa fa-check"></i><b>3.5.3</b> Sesgos No Cuantificados</a></li>
+</ul></li>
+<li class="chapter" data-level="3.6" data-path="visualización-y-análisis-exploratorio-de-datos.html"><a href="visualización-y-análisis-exploratorio-de-datos.html#comportamiento-del-flujo-vehicular-en-el-tiempo"><i class="fa fa-check"></i><b>3.6</b> Comportamiento del flujo vehicular en el tiempo</a></li>
+<li class="chapter" data-level="3.7" data-path="04-Capitulo_4.html"><a href="#distribuci%C3%B3n-de-la-velocidad-promedio-por-hora"><i class="fa fa-check"></i><b>3.7</b> Distribución de la velocidad promedio por hora</a></li>
+<li class="chapter" data-level="3.8" data-path="04-Capitulo_4.html"><a href="#diagrama-de-dispersi%C3%B3n-del-flujo-vehicular-vs-velocidad-promedio"><i class="fa fa-check"></i><b>3.8</b> Diagrama de dispersión del flujo vehicular vs velocidad promedio</a></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="04-Capitulo_4.html"><a href="#cap%C3%ADtulo-3"><i class="fa fa-check"></i><b>4</b> Capítulo 3</a>
+<ul>
+<li class="chapter" data-level="4.1" data-path="04-Capitulo_4.html"><a href="#descomposici%C3%B3n-de-la-serie-temporal"><i class="fa fa-check"></i><b>4.1</b> Descomposición de la Serie Temporal</a></li>
+<li class="chapter" data-level="4.2" data-path="04-Capitulo_4.html"><a href="#estacionariedad-y-diferenciaci%C3%B3n"><i class="fa fa-check"></i><b>4.2</b> Estacionariedad y Diferenciación</a>
+<ul>
+<li class="chapter" data-level="4.2.1" data-path="capítulo-3.html"><a href="capítulo-3.html"><i class="fa fa-check"></i><b>4.2.1</b> Test KPSS (Kwiatkowski-Phillips-Schmidt-Shin)</a></li>
+<li class="chapter" data-level="4.2.2" data-path="04-Capitulo_4.html"><a href="#diferenciaci%C3%B3n-estacional"><i class="fa fa-check"></i><b>4.2.2</b> Diferenciación Estacional</a></li>
+<li class="chapter" data-level="4.2.3" data-path="04-Capitulo_4.html"><a href="#confirmaci%C3%B3n-de-estacionariedad"><i class="fa fa-check"></i><b>4.2.3</b> Confirmación de Estacionariedad</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="04-Capitulo_4.html"><a href="#cap%C3%ADtulo-4"><i class="fa fa-check"></i><b>5</b> Capítulo 4</a>
+<ul>
+<li class="chapter" data-level="5.1" data-path="04-Capitulo_4.html"><a href="#fundamentaci%C3%B3n-metodol%C3%B3gica"><i class="fa fa-check"></i><b>5.1</b> Fundamentación Metodológica</a>
+<ul>
+<li class="chapter" data-level="5.1.1" data-path="capítulo-4.html"><a href="capítulo-4.html"><i class="fa fa-check"></i><b>5.1.1</b> Modelos Aditivos vs. Multiplicativos</a></li>
+</ul></li>
+<li class="chapter" data-level="5.2" data-path="04-Capitulo_4.html"><a href="#estimaci%C3%B3n-del-modelo"><i class="fa fa-check"></i><b>5.2</b> Estimación del Modelo</a>
+<ul>
+<li class="chapter" data-level="5.2.1" data-path="04-Capitulo_4.html"><a href="#confirmaci%C3%B3n-cuantitativa-de-la-estacionalidad"><i class="fa fa-check"></i><b>5.2.1</b> Confirmación Cuantitativa de la Estacionalidad</a></li>
+<li class="chapter" data-level="5.2.2" data-path="capítulo-4.html"><a href="capítulo-4.html#nivel1-operadores-estacionales"><i class="fa fa-check"></i><b>5.2.2</b> Nivel 1: Operadores Estacionales</a></li>
+<li class="chapter" data-level="5.2.3" data-path="capítulo-4.html"><a href="capítulo-4.html#nivel2-operadores-no-estacionales"><i class="fa fa-check"></i><b>5.2.3</b> Nivel 2: Operadores No Estacionales</a></li>
+</ul></li>
+</ul></li>
+<li class="divider"></li>
+<li><a href="https://github.com/g6seriesdetiempo-ux/PEMSTrafficdata" target="blank">Published with bookdown</a></li>
+
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Análisis Series de Tiempo de un conjunto de datos de tráfico</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="capítulo-4" class="section level1 hasAnchor" number="5">
+<h1><span class="header-section-number">5</span> Capítulo 4<a href="#cap%C3%ADtulo-4" class="anchor-section" aria-label="Anchor link to header"></a></h1>
+<div id="fundamentación-metodológica" class="section level2 hasAnchor" number="5.1">
+<h2><span class="header-section-number">5.1</span> Fundamentación Metodológica<a href="#fundamentaci%C3%B3n-metodol%C3%B3gica" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>En el Capítulo 3, se estableció a través de pruebas formales (ADF, KPSS) y análisis de descomposición (STL) que la serie de tiempo FlujoTotal (flujo_ts) es no estacionaria. Específicamente, exhibe una fuerte estacionalidad diaria (frecuencia <span class="math inline">\(s=24\)</span>) y una tendencia subyacente. La conclusión del Capítulo 3 fue que la serie requería diferenciación estacional (<span class="math inline">\(D=1\)</span>, <span class="math inline">\(s=24\)</span>) para alcanzar la estacionariedad, preparando así el terreno para un modelo de la familia SARIMA.Este capítulo explora una familia de modelos alternativa: el suavizamiento exponencial, con un enfoque en el método de Holt-Winters.Por lo tanto para aplicar Holt-Winters, debemos utilizar la serie original no estacionaria (flujo_ts), no la serie diferenciada (flujo_diff_24). Aplicar suavizamiento estacional a una serie ya desestacionalizada sería conceptual y estadísticamente incorrecto.</p>
+<p>El suavizamiento exponencial es una familia de métodos de pronóstico donde las predicciones son un promedio ponderado de observaciones pasadas, con ponderaciones que disminuyen exponencialmente a medida que las observaciones se alejan en el tiempo.Suavizamiento Exponencial Simple (SES): Modela solo el Nivel (<span class="math inline">\(l_t\)</span>). Es adecuado para series sin tendencia ni estacionalidad. Dada la evidencia del Capítulo 3, este método es manifiestamente insuficiente.Suavizamiento de Holt (Doble): Modela el Nivel (<span class="math inline">\(l_t\)</span>) y la Tendencia (<span class="math inline">\(b_t\)</span>). Es una mejora, pero ignora la estacionalidad diaria dominante (frecuencia <span class="math inline">\(s=24\)</span>) que identificamos.Suavizamiento de Holt-Winters (Triple): Es el método requerido. Modela Nivel (<span class="math inline">\(l_t\)</span>), Tendencia (<span class="math inline">\(b_t\)</span>) y Estacionalidad (<span class="math inline">\(s_t\)</span>).</p>
+<div id="modelos-aditivos-vs.-multiplicativos" class="section level3 hasAnchor" number="5.1.1">
+<h3><span class="header-section-number">5.1.1</span> Modelos Aditivos vs. Multiplicativos<a href="capítulo-4.html#modelos-aditivos-vs.-multiplicativos" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>El método Holt-Winters existe en dos variantes principales, definidas por cómo interactúan los componentes:Modelo Aditivo: <span class="math inline">\(Y_t = l_t + b_t + s_t + \epsilon_t\)</span>Se asume que la magnitud de la fluctuación estacional es constante y no depende del nivel de la serie.La descomposición STL del Capítulo 3 (Sección 3.1) mostró un componente “Residual” cuya “magnitud parece ser relativamente constante”, lo que proporciona evidencia a favor de un modelo aditivo.Modelo Multiplicativo: <span class="math inline">\(Y_t = (l_t + b_t) \times s_t + \epsilon_t\)</span>Se asume que la magnitud de la fluctuación estacional es un porcentaje del nivel de la serie. Es decir, los picos estacionales crecen en magnitud a medida que la tendencia sube.Basado en el análisis visual de la descomposición STL, se postula que un modelo aditivo (ETS(A,A,A): Error Aditivo, Tendencia Aditiva, Estacionalidad Aditiva) es el candidato más parsimonioso y teóricamente justificado.</p>
+</div>
+</div>
+<div id="estimación-del-modelo" class="section level2 hasAnchor" number="5.2">
+<h2><span class="header-section-number">5.2</span> Estimación del Modelo<a href="#estimaci%C3%B3n-del-modelo" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>Emplearemos el framework ets() del paquete forecast, se basa en un modelo de espacio de estados (state-space) y selecciona automáticamente el mejor modelo (Error, Trend, Seasonality) basándose en el Criterio de Información de Akaike Corregido (AICc).</p>
+<pre><code>## ETS(A,Ad,N) 
+## 
+## Call:
+## ets(y = flujo_ts)
+## 
+##   Smoothing parameters:
+##     alpha = 0.9998 
+##     beta  = 0.9988 
+##     phi   = 0.8 
+## 
+##   Initial states:
+##     l = 6.0563 
+##     b = 3.8762 
+## 
+##   sigma:  13.3221
+## 
+##      AIC     AICc      BIC 
+## 48015.20 48015.22 48052.32 
+## 
+## Training set error measures:
+##                        ME     RMSE      MAE     MPE     MAPE      MASE
+## Training set -0.004043378 13.31282 9.257991 6.88486 15.14223 0.8155005
+##                   ACF1
+## Training set 0.3369888</code></pre>
+<p>El modelo óptimo seleccionado es ETS(A, Ad, N):Error (E): A (Additive / Aditivo). La varianza del ruido (<span class="math inline">\(\epsilon_t\)</span>) es constante.Trend (T): Ad (Additive Damped / Aditiva Amortiguada). Existe una tendencia lineal que se amortigua, convergiendo a una asíntota.Seasonality (S): N (None / Ninguna).</p>
+<p>Este es un hallazgo problemático y contradictorio a los del Capítulo 3 , en el que se probó que la estacionalidad diaria es la característica más dominante de la serie. Sin embargo, el modelo estadístico ets(), al optimizar el AICc, ha concluido que el mejor modelo es uno que ignora por completo la estacionalidad.</p>
+<p>Los parámetros de suavizamiento lo confirman:<span class="math inline">\(\alpha\)</span> (alpha) = 0.9998<span class="math inline">\(\beta\)</span> (beta) = 0.9988</p>
+<div id="confirmación-cuantitativa-de-la-estacionalidad" class="section level3 hasAnchor" number="5.2.1">
+<h3><span class="header-section-number">5.2.1</span> Confirmación Cuantitativa de la Estacionalidad<a href="#confirmaci%C3%B3n-cuantitativa-de-la-estacionalidad" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>Revisitemos la evidencia, esta vez cuantificando la fuerza de los componentes mediante una descomposición STL y el análisis de la varianza.
+<img src="my_gitbook_files/figure-html/unnamed-chunk-11-1.png" width="672" /></p>
+<pre><code>## Varianza explicada por estacionalidad: 46.58 %</code></pre>
+<pre><code>## Varianza explicada por tendencia: 2.46 %</code></pre>
+<pre><code>## Varianza residual: 43.72 %</code></pre>
+<ul>
+<li><p>La estacionalidad es real y dominante: Explica el 46.58% de la varianza total de la serie.</p></li>
+<li><p>La tendencia es marginal: Explica solo el 2.46% de la varianza.</p></li>
+<li><p>El ruido es alto: El componente residual (ruido) también es masivo, con un 43.72% de la varianza.</p></li>
+</ul>
+<p>Con estos resultados no s podemos preguntar ¿qué tan mal se comportan los modelos estacionales que forzamos a ajustarse? Comparemos el modelo (A,Ad,N) con los modelos Holt-Winters aditivos teóricamente correctos: (A,A,A) y (A,Ad,A) (con tendencia amortiguada).</p>
+<pre><code>##            Modelo      AIC     MAPE
+## 1 Actual (A,Ad,N) 48015.20 15.14223
+## 2             AAA 49450.94 25.21943
+## 3      AAA-damped 49468.57 26.59980</code></pre>
+<p>La descomposición STL indica que la estacionalidad explica un 46.58% de la varianza total. Si bien esta magnitud, en teoría, justificaría un modelo Holt-Winters triple (ETS(A,A,A)), la realidad es que un modelo sin componente estacional, el ETS(A,Ad,N), resultó ser superior.</p>
+<p>Esto se comprobó en dos frentes:</p>
+<ul>
+<li><strong>Criterios de Información (AIC):</strong> 48,015 (ETS(A,Ad,N)) vs. 49,451 (ETS(A,A,A))</li>
+<li><strong>Precisión Predictiva (MAPE):</strong> 15.14% vs. 25.22%</li>
+</ul>
+<p>Esta aparente contradicción no invalida la teoría del suavizamiento exponencial. Más bien, expone las condiciones de borde donde la familia de modelos ETS deja de ser la herramienta óptima, especialmente cuando la estructura estacional es compleja o ruidosa.</p>
+<p>Por esto, proponemos explorar el método SARIMA (Seasonal AutoRegressive Integrated Moving Average), diseñado precisamente para este tipo de estructura temporal compleja.</p>
+<p>Su formulación general divide el problema en dos niveles:</p>
+<p><span class="math display">\[\Phi_P(B^s)\phi_p(B)\nabla^D_s\nabla^d Y_t = \Theta_Q(B^s)\theta_q(B)\epsilon_t\]</span></p>
+</div>
+<div id="nivel1-operadores-estacionales" class="section level3 hasAnchor" number="5.2.2">
+<h3><span class="header-section-number">5.2.2</span> Nivel 1: Operadores Estacionales<a href="capítulo-4.html#nivel1-operadores-estacionales" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>Estos componentes capturan la periodicidad larga (en este caso, <span class="math inline">\(s=24\)</span>).</p>
+<ul>
+<li><strong>Diferenciación Estacional (<span class="math inline">\(\nabla^D_s\)</span>):</strong> Se define como <span class="math inline">\(\nabla^D_s Y_t = Y_t - Y_{t-s}\)</span>. Su función es eliminar el patrón periódico sin necesidad de estimar 24 parámetros separados.</li>
+<li><strong>SAR (<span class="math inline">\(\Phi_P(B^s)\)</span>):</strong> Es el componente autorregresivo a nivel estacional.</li>
+<li><strong>SMA (<span class="math inline">\(\Theta_Q(B^s)\)</span>):</strong> Es el componente de promedios móviles a nivel estacional.</li>
+</ul>
+</div>
+<div id="nivel2-operadores-no-estacionales" class="section level3 hasAnchor" number="5.2.3">
+<h3><span class="header-section-number">5.2.3</span> Nivel 2: Operadores No Estacionales<a href="capítulo-4.html#nivel2-operadores-no-estacionales" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>Estos componentes modelan la dinámica de corto plazo (ej. lags 1-3) identificada en el PACF, <em>después</em> de que la estacionalidad ha sido removida.</p>
+<ul>
+<li><strong>AR (<span class="math inline">\(\phi_p\)</span>):</strong> Componente autorregresivo no estacional.</li>
+<li><strong>MA (<span class="math inline">\(\theta_q\)</span>):</strong> Componente de promedios móviles no estacional.</li>
+<li><strong>Diferenciación (<span class="math inline">\(\nabla^d\)</span>):</strong> Integración no estacional para hacer la serie estacionaria.</li>
+</ul>
+<p>Esta estructura modular ofrece ventajas claras sobre ETS, especialmente cuando nos enfrentamos a series con una alta varianza residual que el suavizamiento exponencial no logra capturar adecuadamente.</p>
+
+</div>
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="capítulo-3.html" class="navigation navigation-prev navigation-unique" aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+  "sharing": {
+    "github": false,
+    "facebook": true,
+    "twitter": true,
+    "linkedin": false,
+    "weibo": false,
+    "instapaper": false,
+    "vk": false,
+    "whatsapp": false,
+    "all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+  },
+  "fontsettings": {
+    "theme": "white",
+    "family": "sans",
+    "size": 2
+  },
+  "edit": {
+    "link": "https://github.com/g6seriesdetiempo-ux/PEMSTrafficdata /edit/BRANCH/04-Capitulo_4.Rmd",
+    "text": "Edit"
+  },
+  "history": {
+    "link": null,
+    "text": null
+  },
+  "view": {
+    "link": null,
+    "text": null
+  },
+  "download": ["my_gitbook.pdf", "my_gitbook.epub"],
+  "search": {
+    "engine": "fuse",
+    "options": null
+  },
+  "toc": {
+    "collapse": "subsection"
+  }
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/latest.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>

@@ -1,4 +1,6 @@
 
+#02- Capítulo 
+
 # Visualización y Análisis Exploratorio de Datos
 
 Para el desarrollo del proyecto se decidió analizar el flujo vehicular a partir del dataset obtenido del PeMS, tal como se mencionó previamente.
