@@ -153,6 +153,7 @@
 <li class="chapter" data-level="6.1.1" data-path="05_Capitulo_5.html"><a href="#establecimiento-de-%C3%B3rdenes-de-diferenciaci%C3%B3n"><i class="fa fa-check"></i><b>6.1.1</b> Establecimiento de Órdenes de Diferenciación</a></li>
 </ul></li>
 <li class="chapter" data-level="6.2" data-path="05_Capitulo_5.html"><a href="#interpretaci%C3%B3n-de-residuales"><i class="fa fa-check"></i><b>6.2</b> Interpretación de Residuales</a></li>
+<li class="chapter" data-level="6.3" data-path="05_Capitulo_5.html"><a href="#predicci%C3%B3n"><i class="fa fa-check"></i><b>6.3</b> Predicción</a></li>
 </ul></li>
 <li class="divider"></li>
 <li><a href="https://github.com/g6seriesdetiempo-ux/PEMSTrafficdata" target="blank">Published with bookdown</a></li>
@@ -242,12 +243,10 @@
 ## Q* = 412.96, df = 42, p-value &lt; 2.2e-16
 ## 
 ## Model df: 6.   Total lags used: 48</code></pre>
-<p>Los capítulos anteriores establecieron que la serie requiere:</p>
-<p>D = 1: diferenciación estacional para eliminar estacionalidad estocástica
-d = 0: no se requiere diferenciación adicional (confirmado por test ADF, p=0.01)</p>
-<p>La serie transformada Yₜ = ∇₂₄Xₜ = Xₜ - Xₜ₋₂₄ es estacionaria.
-## Predicción
-Dado que el modelo presenta autocorrelación residual significativa, las predicciones deben interpretarse con cautela. Los intervalos de confianza pueden estar subestimados.
+</div>
+<div id="predicción" class="section level2 hasAnchor" number="6.3">
+<h2><span class="header-section-number">6.3</span> Predicción<a href="#predicci%C3%B3n" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>Dado que el modelo presenta autocorrelación residual significativa, las predicciones deben interpretarse con cautela. Los intervalos de confianza pueden estar subestimados.
 <img src="my_gitbook_files/figure-html/unnamed-chunk-18-1.png" width="672" /><img src="my_gitbook_files/figure-html/unnamed-chunk-18-2.png" width="672" /></p>
 
 </div>

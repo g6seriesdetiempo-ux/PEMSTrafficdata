@@ -44,3 +44,4 @@ capitulo-5
 modelo-sarima-metodología-box-jenkins
 establecimiento-de-órdenes-de-diferenciación
 interpretación-de-residuales
+predicción
