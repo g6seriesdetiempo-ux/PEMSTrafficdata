@@ -1,5 +1,175 @@
+---
+output:
+  html_document: default
+  pdf_document: default
+---
 # Capitulo 5
 
+## Modelo SARIMA (Metodología Box-Jenkins) 
 
 
+La metodología **Box-Jenkins** (*Box & Jenkins, 1970*) es un procedimiento iterativo para identificar, estimar y validar modelos ARIMA de la forma:
+
+> **ARIMA(p,d,q)(P,D,Q)ₘ**
+
+Donde:
+
+* **(p,d,q):** Órdenes no estacionales (autorregresivo, diferenciación, media móvil).
+* **(P,D,Q)ₘ:** Órdenes estacionales con período *m*.
+* **m=24:** Periodicidad estacional (24 horas).
+
+### Establecimiento de Órdenes de Diferenciación
+
+Los capítulos anteriores establecieron que la serie requiere:
+
+* **D = 1:** Diferenciación estacional para eliminar estacionalidad estocástica.
+* **d = 0:** No se requiere diferenciación adicional (confirmado por test ADF, p=0.01).
+
+La serie transformada `Yₜ = ∇₂₄Xₜ = Xₜ - Xₜ₋₂₄` es estacionaria.
+
+```{r, echo=FALSE, message=FALSE, warning = FALSE}
+
+library(tidyverse)
+library(lubridate)
+library(ggplot2)
+library(scales)
+library(knitr)
+library(tseries)
+library(forecast) # Para Arima(), auto.arima(), acf/pacf, checkresiduals
+library(uroot)
+
+# Definir la ruta del archivo CSV
+data_file <- "./data/hourly_aggregated_data.csv"
+
+# Cargar los datos
+data_raw <- read_csv(data_file)
+
+# Limpieza y preparación de datos
+data_clean <- data_raw %>%
+  rename(
+    Timestamp = Timestamp,
+    FlujoTotal = TotalFlow,
+    VelocidadPromedio = AvgSpeed
+  ) %>%
+  mutate(
+    Timestamp = ymd_hms(Timestamp),
+    FlujoTotal = as.numeric(FlujoTotal),
+    VelocidadPromedio = as.numeric(VelocidadPromedio),
+    Hora = hour(Timestamp)
+  ) %>%
+  select(Timestamp, FlujoTotal, VelocidadPromedio, Hora) %>%
+  drop_na(FlujoTotal, VelocidadPromedio)
+
+# 1. Convertir el Flujo Total en un objeto de serie de tiempo (ts)
+# La frecuencia es 24, asumiendo una estacionalidad diaria fuerte
+flujo_ts <- ts(data_clean$FlujoTotal, frequency = 24)
+
+
+
+```
+El primer paso de la metodología Box-Jenkins es transformar la serie para que sea estacionaria (media y varianza constantes).Los capítulos anteriores concluyeron que la serie requiere diferenciación estacional ($D=1$, $m=24$) para eliminar la estacionalidad estocástica. También debemos verificar si se necesita diferenciación no estacional ($d=1$) para eliminar la tendencia.Utilizaremos la función auto.arima() con restricciones para que determine el orden de diferenciación óptimo, y luego lo confirmaremos manualmente.
+
+```{r, echo=FALSE, message=FALSE, warning = FALSE}
+# Determinar el orden de diferenciación requerido
+# D=1 (Estacional) fue determinado en Cap. 3
+# nsdiffs() puede confirmar esto:
+D_recomendado <- nsdiffs(flujo_ts)
+cat("Número de diferenciaciones estacionales (D) recomendadas:", D_recomendado, "\n")
+
+# ndiffs() puede determinar si se requiere d=1 (no estacional)
+# Lo aplicamos *después* de la diferenciación estacional
+d_recomendado <- ndiffs(diff(flujo_ts, lag = 24, differences = D_recomendado))
+cat("Número de diferenciaciones no estacionales (d) recomendadas:", d_recomendado, "\n")
+
+# --- Aplicar la diferenciación ---
+# Basado en el análisis (usualmente D=1, d=0 o d=1)
+D_final <- D_recomendado
+d_final <- d_recomendado 
+
+# Crear la serie estacionaria
+flujo_ts_estacionario <- diff(flujo_ts, lag = 24, differences = D_final)
+if (d_final > 0) {
+  flujo_ts_estacionario <- diff(flujo_ts_estacionario, differences = d_final)
+}
+
+# --- Verificar Estacionariedad ---
+# Graficar la serie transformada
+plot(flujo_ts_estacionario, main = paste("Serie transformada con D=", D_final, " y d=", d_final))
+
+# Aplicar Prueba ADF (Dickey-Fuller Aumentada)
+# H0: La serie NO es estacionaria (tiene raíz unitaria)
+# p-value < 0.05 rechaza H0 y confirma estacionariedad
+print("Prueba ADF sobre la serie transformada:")
+adf.test(flujo_ts_estacionario, alternative = "stationary")
+```
+Una vez que la serie es estacionaria, analizamos sus funciones de autocorrelación (ACF) y autocorrelación parcial (PACF) para identificar los órdenes $p, q, P, Q$5.Lags Estacionales (P, Q): Observar los lags múltiplos de $m=24$ (es decir, 24, 48, 72...).Un pico significativo en el ACF en el lag 24 (y corte) sugiere un orden SMA ($Q=1$).Un pico significativo en el PACF en el lag 24 (y corte) sugiere un orden SAR ($P=1$).Lags No Estacionales (p, q): Observar los primeros lags (1, 2, 3...).Picos significativos en el ACF que se cortan sugieren un orden MA ($q$).Picos significativos en el PACF que se cortan sugieren un orden AR ($p$).
+
+```{r, echo=FALSE, message=FALSE, warning = FALSE}
+#Graficar ACF y PACF de la serie estacionaria
+par(mfrow = c(2, 1)) # Poner dos gráficos en una fila
+
+# ACF
+acf(flujo_ts_estacionario, lag.max = 72, main = "ACF de la Serie Estacionaria")
+
+# PACF
+pacf(flujo_ts_estacionario, lag.max = 72, main = "PACF de la Serie Estacionaria")
+
+par(mfrow = c(1, 1)) # Resetear el layout de gráficos
+```
+
+El análisis  identifica fuertemente la estructura estacional como $(P,D,Q)_m = (1, 1, 0)_{24}$ (con $d=0$ de la sección 7.2). La estructura no estacional es un ARMA(p,q) mixto.Un modelo candidato completo sería $ARIMA(p, 0, q)(1, 1, 0)_{24}$.Dado que la identificación manual de $p$ y $q$ es ambigua, procederemos en la siguiente sección a utilizar auto.arima(). Esta función automatizada es ideal para estos casos, ya que puede probar eficientemente varias combinaciones de $p$ y $q$ (mientras le forzamos a usar nuestro $D=1$ y $P=1, Q=0$ identificados) para encontrar el modelo más parsimonioso según el AICc.
+
+usaremos la función auto.arima() como un método robusto y automatizado para encontrar el mejor modelo. auto.arima() busca iterativamente el modelo con el menor AICc (Criterio de Información de Akaike Corregido), manejando la selección de $p,d,q,P,D,Q$ automáticamente.Forzaremos $D=1$ y $d=0$ y  $m=24$, permitiendo que el algoritmo encuentre los mejores $p,q,P,Q$.
+
+```{r, echo=FALSE, message=FALSE, warning = FALSE}
+# --- Estimación Automática con auto.arima ---
+# Esta función es un reemplazo moderno y robusto para la identificación manual
+# D=1 se fuerza basado en nuestro análisis previo.
+# stepwise=FALSE y approximation=FALSE realizan una búsqueda más exhaustiva.
+
+modelo_sarima <- auto.arima(
+  flujo_ts,
+  D = 1, # Forzamos la diferenciación estacional
+  d = d_recomendado, # Usamos la 'd' recomendada
+  stepwise = TRUE, # Usar TRUE para velocidad, FALSE para mayor precisión
+  approximation = TRUE,
+  seasonal = TRUE
+)
+
+# --- Revisar el modelo seleccionado ---
+print(summary(modelo_sarima))
+
+# Comparar el AICc con los modelos ETS del Capítulo 4/5
+cat("AICc (ETS, A,Ad,N): 48015.22\n")
+cat("AICc (ETS, AAA):    49450.94\n")
+cat("AICc (SARIMA):", summary(modelo_sarima)$aicc, "\n")
+```
+
+## Interpretación de Residuales
+
+```{r, echo=FALSE, message=FALSE, warning = FALSE}
+
+checkresiduals(modelo_sarima)
+
+
+```
+
+Los capítulos anteriores establecieron que la serie requiere:
+
+D = 1: diferenciación estacional para eliminar estacionalidad estocástica
+d = 0: no se requiere diferenciación adicional (confirmado por test ADF, p=0.01)
+
+La serie transformada Yₜ = ∇₂₄Xₜ = Xₜ - Xₜ₋₂₄ es estacionaria.
+## Predicción
+Dado que el modelo presenta autocorrelación residual significativa, las predicciones deben interpretarse con cautela. Los intervalos de confianza pueden estar subestimados.
+```{r, echo=FALSE, message=FALSE, warning = FALSE}
+# Generar pronóstico para 48 períodos (horas)
+pronostico_sarima <- forecast(modelo_sarima, h = 48)
+
+# Graficar el pronóstico
+plot(pronostico_sarima, main = "Pronóstico SARIMA del Flujo Vehicular")
+
+# Opcional: Graficar con zoom en los últimos días
+plot(pronostico_sarima, xlim = c(length(flujo_ts)/24 - 5, length(flujo_ts)/24 + 2))
+```
 

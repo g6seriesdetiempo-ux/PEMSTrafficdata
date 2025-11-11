@@ -146,7 +146,14 @@
 <li class="chapter" data-level="5.2.3" data-path="capítulo-4.html"><a href="capítulo-4.html#nivel2-operadores-no-estacionales"><i class="fa fa-check"></i><b>5.2.3</b> Nivel 2: Operadores No Estacionales</a></li>
 </ul></li>
 </ul></li>
-<li class="chapter" data-level="6" data-path="capitulo-5.html"><a href="capitulo-5.html"><i class="fa fa-check"></i><b>6</b> Capitulo 5</a></li>
+<li class="chapter" data-level="6" data-path="capitulo-5.html"><a href="capitulo-5.html"><i class="fa fa-check"></i><b>6</b> Capitulo 5</a>
+<ul>
+<li class="chapter" data-level="6.1" data-path="05_Capitulo_5.html"><a href="#modelo-sarima-metodolog%C3%ADa-box-jenkins"><i class="fa fa-check"></i><b>6.1</b> Modelo SARIMA (Metodología Box-Jenkins)</a>
+<ul>
+<li class="chapter" data-level="6.1.1" data-path="05_Capitulo_5.html"><a href="#establecimiento-de-%C3%B3rdenes-de-diferenciaci%C3%B3n"><i class="fa fa-check"></i><b>6.1.1</b> Establecimiento de Órdenes de Diferenciación</a></li>
+</ul></li>
+<li class="chapter" data-level="6.2" data-path="05_Capitulo_5.html"><a href="#interpretaci%C3%B3n-de-residuales"><i class="fa fa-check"></i><b>6.2</b> Interpretación de Residuales</a></li>
+</ul></li>
 <li class="divider"></li>
 <li><a href="https://github.com/g6seriesdetiempo-ux/PEMSTrafficdata" target="blank">Published with bookdown</a></li>
 
@@ -169,7 +176,81 @@
             <section class="normal" id="section-">
 <div id="capitulo-5" class="section level1 hasAnchor" number="6">
 <h1><span class="header-section-number">6</span> Capitulo 5<a href="capitulo-5.html#capitulo-5" class="anchor-section" aria-label="Anchor link to header"></a></h1>
+<div id="modelo-sarima-metodología-box-jenkins" class="section level2 hasAnchor" number="6.1">
+<h2><span class="header-section-number">6.1</span> Modelo SARIMA (Metodología Box-Jenkins)<a href="#modelo-sarima-metodolog%C3%ADa-box-jenkins" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>La metodología <strong>Box-Jenkins</strong> (<em>Box &amp; Jenkins, 1970</em>) es un procedimiento iterativo para identificar, estimar y validar modelos ARIMA de la forma:</p>
+<blockquote>
+<p><strong>ARIMA(p,d,q)(P,D,Q)ₘ</strong></p>
+</blockquote>
+<p>Donde:</p>
+<ul>
+<li><strong>(p,d,q):</strong> Órdenes no estacionales (autorregresivo, diferenciación, media móvil).</li>
+<li><strong>(P,D,Q)ₘ:</strong> Órdenes estacionales con período <em>m</em>.</li>
+<li><strong>m=24:</strong> Periodicidad estacional (24 horas).</li>
+</ul>
+<div id="establecimiento-de-órdenes-de-diferenciación" class="section level3 hasAnchor" number="6.1.1">
+<h3><span class="header-section-number">6.1.1</span> Establecimiento de Órdenes de Diferenciación<a href="#establecimiento-de-%C3%B3rdenes-de-diferenciaci%C3%B3n" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>Los capítulos anteriores establecieron que la serie requiere:</p>
+<ul>
+<li><strong>D = 1:</strong> Diferenciación estacional para eliminar estacionalidad estocástica.</li>
+<li><strong>d = 0:</strong> No se requiere diferenciación adicional (confirmado por test ADF, p=0.01).</li>
+</ul>
+<p>La serie transformada <code>Yₜ = ∇₂₄Xₜ = Xₜ - Xₜ₋₂₄</code> es estacionaria.</p>
+<p>El primer paso de la metodología Box-Jenkins es transformar la serie para que sea estacionaria (media y varianza constantes).Los capítulos anteriores concluyeron que la serie requiere diferenciación estacional (<span class="math inline">\(D=1\)</span>, <span class="math inline">\(m=24\)</span>) para eliminar la estacionalidad estocástica. También debemos verificar si se necesita diferenciación no estacional (<span class="math inline">\(d=1\)</span>) para eliminar la tendencia.Utilizaremos la función auto.arima() con restricciones para que determine el orden de diferenciación óptimo, y luego lo confirmaremos manualmente.</p>
+<pre><code>## Número de diferenciaciones estacionales (D) recomendadas: 1</code></pre>
+<pre><code>## Número de diferenciaciones no estacionales (d) recomendadas: 0</code></pre>
+<p><img src="my_gitbook_files/figure-html/unnamed-chunk-14-1.png" width="672" /></p>
+<pre><code>## [1] &quot;Prueba ADF sobre la serie transformada:&quot;</code></pre>
+<pre><code>## 
+##  Augmented Dickey-Fuller Test
+## 
+## data:  flujo_ts_estacionario
+## Dickey-Fuller = -15.225, Lag order = 15, p-value = 0.01
+## alternative hypothesis: stationary</code></pre>
+<p>Una vez que la serie es estacionaria, analizamos sus funciones de autocorrelación (ACF) y autocorrelación parcial (PACF) para identificar los órdenes $p, q, P, Q$5.Lags Estacionales (P, Q): Observar los lags múltiplos de <span class="math inline">\(m=24\)</span> (es decir, 24, 48, 72…).Un pico significativo en el ACF en el lag 24 (y corte) sugiere un orden SMA (<span class="math inline">\(Q=1\)</span>).Un pico significativo en el PACF en el lag 24 (y corte) sugiere un orden SAR (<span class="math inline">\(P=1\)</span>).Lags No Estacionales (p, q): Observar los primeros lags (1, 2, 3…).Picos significativos en el ACF que se cortan sugieren un orden MA (<span class="math inline">\(q\)</span>).Picos significativos en el PACF que se cortan sugieren un orden AR (<span class="math inline">\(p\)</span>).</p>
+<p><img src="my_gitbook_files/figure-html/unnamed-chunk-15-1.png" width="672" /></p>
+<p>El análisis identifica fuertemente la estructura estacional como <span class="math inline">\((P,D,Q)_m = (1, 1, 0)_{24}\)</span> (con <span class="math inline">\(d=0\)</span> de la sección 7.2). La estructura no estacional es un ARMA(p,q) mixto.Un modelo candidato completo sería <span class="math inline">\(ARIMA(p, 0, q)(1, 1, 0)_{24}\)</span>.Dado que la identificación manual de <span class="math inline">\(p\)</span> y <span class="math inline">\(q\)</span> es ambigua, procederemos en la siguiente sección a utilizar auto.arima(). Esta función automatizada es ideal para estos casos, ya que puede probar eficientemente varias combinaciones de <span class="math inline">\(p\)</span> y <span class="math inline">\(q\)</span> (mientras le forzamos a usar nuestro <span class="math inline">\(D=1\)</span> y <span class="math inline">\(P=1, Q=0\)</span> identificados) para encontrar el modelo más parsimonioso según el AICc.</p>
+<p>usaremos la función auto.arima() como un método robusto y automatizado para encontrar el mejor modelo. auto.arima() busca iterativamente el modelo con el menor AICc (Criterio de Información de Akaike Corregido), manejando la selección de <span class="math inline">\(p,d,q,P,D,Q\)</span> automáticamente.Forzaremos <span class="math inline">\(D=1\)</span> y <span class="math inline">\(d=0\)</span> y <span class="math inline">\(m=24\)</span>, permitiendo que el algoritmo encuentre los mejores <span class="math inline">\(p,q,P,Q\)</span>.</p>
+<pre><code>## Series: flujo_ts 
+## ARIMA(2,0,2)(2,1,0)[24] 
+## 
+## Coefficients:
+##          ar1      ar2     ma1     ma2     sar1     sar2
+##       1.1111  -0.3825  0.5428  0.2583  -0.2071  -0.2073
+## s.e.  0.0359   0.0314  0.0368  0.0283   0.0171   0.0165
+## 
+## sigma^2 = 52.93:  log likelihood = -12143.32
+## AIC=24300.65   AICc=24300.68   BIC=24343.91
+## 
+## Training set error measures:
+##                      ME     RMSE      MAE       MPE     MAPE      MASE
+## Training set 0.05073938 7.244866 4.360016 -1.666478 8.575633 0.3840569
+##                      ACF1
+## Training set -0.001711128</code></pre>
+<pre><code>## AICc (ETS, A,Ad,N): 48015.22</code></pre>
+<pre><code>## AICc (ETS, AAA):    49450.94</code></pre>
+<pre><code>## AICc (SARIMA): 24300.68</code></pre>
+</div>
+</div>
+<div id="interpretación-de-residuales" class="section level2 hasAnchor" number="6.2">
+<h2><span class="header-section-number">6.2</span> Interpretación de Residuales<a href="#interpretaci%C3%B3n-de-residuales" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p><img src="my_gitbook_files/figure-html/unnamed-chunk-17-1.png" width="672" /></p>
+<pre><code>## 
+##  Ljung-Box test
+## 
+## data:  Residuals from ARIMA(2,0,2)(2,1,0)[24]
+## Q* = 412.96, df = 42, p-value &lt; 2.2e-16
+## 
+## Model df: 6.   Total lags used: 48</code></pre>
+<p>Los capítulos anteriores establecieron que la serie requiere:</p>
+<p>D = 1: diferenciación estacional para eliminar estacionalidad estocástica
+d = 0: no se requiere diferenciación adicional (confirmado por test ADF, p=0.01)</p>
+<p>La serie transformada Yₜ = ∇₂₄Xₜ = Xₜ - Xₜ₋₂₄ es estacionaria.
+## Predicción
+Dado que el modelo presenta autocorrelación residual significativa, las predicciones deben interpretarse con cautela. Los intervalos de confianza pueden estar subestimados.
+<img src="my_gitbook_files/figure-html/unnamed-chunk-18-1.png" width="672" /><img src="my_gitbook_files/figure-html/unnamed-chunk-18-2.png" width="672" /></p>
 
+</div>
 </div>
             </section>
 

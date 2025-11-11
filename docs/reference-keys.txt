@@ -41,3 +41,6 @@ confirmación-cuantitativa-de-la-estacionalidad
 nivel1-operadores-estacionales
 nivel2-operadores-no-estacionales
 capitulo-5
+modelo-sarima-metodología-box-jenkins
+establecimiento-de-órdenes-de-diferenciación
+interpretación-de-residuales
