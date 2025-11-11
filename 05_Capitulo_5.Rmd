@@ -154,12 +154,7 @@ checkresiduals(modelo_sarima)
 
 ```
 
-Los capítulos anteriores establecieron que la serie requiere:
 
-D = 1: diferenciación estacional para eliminar estacionalidad estocástica
-d = 0: no se requiere diferenciación adicional (confirmado por test ADF, p=0.01)
-
-La serie transformada Yₜ = ∇₂₄Xₜ = Xₜ - Xₜ₋₂₄ es estacionaria.
 ## Predicción
 Dado que el modelo presenta autocorrelación residual significativa, las predicciones deben interpretarse con cautela. Los intervalos de confianza pueden estar subestimados.
 ```{r, echo=FALSE, message=FALSE, warning = FALSE}
