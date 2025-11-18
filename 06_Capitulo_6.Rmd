@@ -16,7 +16,11 @@ Donde:
 * **h(t):** Componente asociado a eventos especiales o días festivos que alteran temporalmente el comportamiento habitual de la serie.
 * **ε_t:** Término de error aleatorio, que recoge la variabilidad no explicada por los componentes anteriores.
 
-De esta forma, Prophet logra adaptarse a series reales que pueden presentar valores faltantes o experimentar variaciones significativas en el tiempo causadas por factores externos, algo que puede resultar más difícil demmodelar mediante modelos clásicos como ARIMA. 
+De esta forma, Prophet logra adaptarse a series reales que pueden presentar valores faltantes o experimentar variaciones significativas en el tiempo causadas por factores externos, algo que puede resultar más difícil de modelar mediante modelos clásicos como ARIMA. 
+
+## Pronostico Prophet
+
+A continuación, se muestra un gráfico de predicción utlizando la biblioteca prophet. 
 
 ```{r, echo=FALSE, message=FALSE, warning = FALSE}
 library(tidyverse)
@@ -84,7 +88,11 @@ plot(m_prophet, forecast_prophet,
 ```
 
 
+En el gráfico, se puede observar un patrón repetitivo a lo largo del tiempo, mostrando una estacionalidad diaria, donde los valores aumentan y disminuyen casi siempre en los mismos rangos cada día. Además, la amplitud de la nube de puntos se mantiene estable en el tiempo, lo cual evidencia que no se presentan cambios significativos en la tendencia del flujo y a pesar de que existen variaciones en los picos mínimos y máximos, dichas variaciones están dentro de un rango acotado.
+
 ## Análisis de Componentes
+
+Con el objetivo de entender mejor el comportamiento del flujo vehicular, se decidió aplicar el modelo Prophet, el cual permitió descomponer la serie en dos componentes principales de tendencia y estacionalidad, tal como se muestra a continuación.
 
 ```{r, echo=FALSE, message=FALSE, warning = FALSE}
 # Graficar los componentes del modelo
@@ -102,3 +110,4 @@ Muestra el patrón promedio de 24 horas y revela una estructura bimodal (de dos 
 Valle Profundo: El flujo vehicular cae a su mínimo absoluto en la madrugada, alrededor de las 3:00 - 4:00 AM, donde resta casi 100 unidades al flujo base.
 Pico Matutino: Hay un fuerte pico de "hora pico" matutina que alcanza su máximo alrededor de las 9:00 - 10:00 AM (añadiendo ~50 unidades).
 Pico Vespertino: Se produce un segundo pico, más alto que el matutino, que alcanza su máximo alrededor de las 3:00 PM (15:00) (añadiendo ~60-70 unidades).Descenso: Después de las 3 PM, el flujo comienza un descenso constante durante el resto de la tarde y noche.
+

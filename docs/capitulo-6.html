@@ -158,7 +158,8 @@
 <li class="chapter" data-level="7" data-path="capitulo-6.html"><a href="capitulo-6.html"><i class="fa fa-check"></i><b>7</b> Capitulo 6</a>
 <ul>
 <li class="chapter" data-level="7.1" data-path="capitulo-6.html"><a href="capitulo-6.html#modelo-prophet"><i class="fa fa-check"></i><b>7.1</b> Modelo Prophet</a></li>
-<li class="chapter" data-level="7.2" data-path="06_Capitulo_6.html"><a href="#an%C3%A1lisis-de-componentes"><i class="fa fa-check"></i><b>7.2</b> Análisis de Componentes</a></li>
+<li class="chapter" data-level="7.2" data-path="capitulo-6.html"><a href="capitulo-6.html#pronostico-prophet"><i class="fa fa-check"></i><b>7.2</b> Pronostico Prophet</a></li>
+<li class="chapter" data-level="7.3" data-path="06_Capitulo_6.html"><a href="#an%C3%A1lisis-de-componentes"><i class="fa fa-check"></i><b>7.3</b> Análisis de Componentes</a></li>
 </ul></li>
 <li class="divider"></li>
 <li><a href="https://github.com/g6seriesdetiempo-ux/PEMSTrafficdata" target="blank">Published with bookdown</a></li>
@@ -196,11 +197,17 @@
 <li><strong>h(t):</strong> Componente asociado a eventos especiales o días festivos que alteran temporalmente el comportamiento habitual de la serie.</li>
 <li><strong>ε_t:</strong> Término de error aleatorio, que recoge la variabilidad no explicada por los componentes anteriores.</li>
 </ul>
-<p>De esta forma, Prophet logra adaptarse a series reales que pueden presentar valores faltantes o experimentar variaciones significativas en el tiempo causadas por factores externos, algo que puede resultar más difícil demmodelar mediante modelos clásicos como ARIMA.</p>
-<p><img src="my_gitbook_files/figure-html/unnamed-chunk-19-1.png" width="672" /></p>
+<p>De esta forma, Prophet logra adaptarse a series reales que pueden presentar valores faltantes o experimentar variaciones significativas en el tiempo causadas por factores externos, algo que puede resultar más difícil de modelar mediante modelos clásicos como ARIMA.</p>
 </div>
-<div id="análisis-de-componentes" class="section level2 hasAnchor" number="7.2">
-<h2><span class="header-section-number">7.2</span> Análisis de Componentes<a href="#an%C3%A1lisis-de-componentes" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<div id="pronostico-prophet" class="section level2 hasAnchor" number="7.2">
+<h2><span class="header-section-number">7.2</span> Pronostico Prophet<a href="capitulo-6.html#pronostico-prophet" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>A continuación, se muestra un gráfico de predicción utlizando la biblioteca prophet.</p>
+<p><img src="my_gitbook_files/figure-html/unnamed-chunk-19-1.png" width="672" /></p>
+<p>En el gráfico, se puede observar un patrón repetitivo a lo largo del tiempo, mostrando una estacionalidad diaria, donde los valores aumentan y disminuyen casi siempre en los mismos rangos cada día. Además, la amplitud de la nube de puntos se mantiene estable en el tiempo, lo cual evidencia que no se presentan cambios significativos en la tendencia del flujo y a pesar de que existen variaciones en los picos mínimos y máximos, dichas variaciones están dentro de un rango acotado.</p>
+</div>
+<div id="análisis-de-componentes" class="section level2 hasAnchor" number="7.3">
+<h2><span class="header-section-number">7.3</span> Análisis de Componentes<a href="#an%C3%A1lisis-de-componentes" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>Con el objetivo de entender mejor el comportamiento del flujo vehicular, se decidió aplicar el modelo Prophet, el cual permitió descomponer la serie en dos componentes principales de tendencia y estacionalidad, tal como se muestra a continuación.</p>
 <p><img src="my_gitbook_files/figure-html/unnamed-chunk-20-1.png" width="672" /></p>
 <ul>
 <li>(Tendencia - <span class="math inline">\(g(t)\)</span>):</li>

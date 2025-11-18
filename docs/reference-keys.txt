@@ -47,4 +47,5 @@ interpretación-de-residuales
 predicción
 capitulo-6
 modelo-prophet
+pronostico-prophet
 análisis-de-componentes
