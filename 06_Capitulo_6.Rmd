@@ -1,0 +1,104 @@
+# Capitulo 6
+
+## Modelo Prophet 
+
+El estudio y la predicción de series de tiempo han avanzado hacia métodos que permiten trabajar con estructuras complejas sin perder su interpretabilidad. En este contexto, el modelo Prophet resulta de gran utilidad, ya que permite modelar de forma simple tendencias y estacionalidades, teniendo en cuenta variables externas que influyan en la dinámica temporal.
+
+El modelo Prophet facilita la descomposición de la serie en sus componentes fundamentales, expresado de la forma:
+
+
+> **y(t) = g(t) + s(t) + h(t) + ε_t**
+
+Donde:
+
+* **g(t):** Componente de tendencia, que describe el crecimiento o decrecimiento de largo plazo e incorpora posibles puntos de cambio.
+* **s(t):** Componente de estacionalidad, encargado de capturar patrones repetitivos en uno o varios ciclos (diarios, semanales, anuales).
+* **h(t):** Componente asociado a eventos especiales o días festivos que alteran temporalmente el comportamiento habitual de la serie.
+* **ε_t:** Término de error aleatorio, que recoge la variabilidad no explicada por los componentes anteriores.
+
+De esta forma, Prophet logra adaptarse a series reales que pueden presentar valores faltantes o experimentar variaciones significativas en el tiempo causadas por factores externos, algo que puede resultar más difícil demmodelar mediante modelos clásicos como ARIMA. 
+
+```{r, echo=FALSE, message=FALSE, warning = FALSE}
+library(tidyverse)
+library(lubridate)
+library(ggplot2)
+library(scales)
+library(knitr)
+library(tseries)
+library(forecast) 
+library(uroot)
+library(prophet)
+
+# Definir la ruta del archivo CSV
+data_file <- "./data/hourly_aggregated_data.csv"
+
+# Cargar los datos
+data_raw <- read_csv(data_file)
+
+# Limpieza y preparación de datos
+data_clean <- data_raw %>%
+  rename(
+    Timestamp = Timestamp,
+    FlujoTotal = TotalFlow,
+    VelocidadPromedio = AvgSpeed
+  ) %>%
+  mutate(
+    Timestamp = ymd_hms(Timestamp),
+    FlujoTotal = as.numeric(FlujoTotal),
+    VelocidadPromedio = as.numeric(VelocidadPromedio),
+    Hora = hour(Timestamp)
+  ) %>%
+  # Nota: Es mejor aplicar drop_na() aquí para todas las columnas clave
+  drop_na(Timestamp, FlujoTotal, VelocidadPromedio) %>%
+  select(Timestamp, FlujoTotal, VelocidadPromedio, Hora)
+
+# 1. Preparar los datos para Prophet
+# Prophet requiere columnas llamadas 'ds' (datestamp) y 'y' (valor)
+prophet_data <- data_clean %>%
+  select(ds = Timestamp, y = FlujoTotal) %>%
+  drop_na()
+
+
+
+# 2. Instanciar y ajustar el modelo
+m_prophet <- prophet(
+  daily.seasonality = TRUE,
+  weekly.seasonality = FALSE,
+  yearly.seasonality = FALSE,
+  seasonality.mode = 'additive' # Coherente con nuestro análisis STL
+)
+
+# Ajustar el modelo a los datos
+# Esta línea ya no debería fallar
+m_prophet <- fit.prophet(m_prophet, prophet_data)
+
+# 3. Crear un dataframe futuro para la predicción
+future <- make_future_dataframe(m_prophet, periods = 48, freq = 'hour')
+
+# 4. Generar la predicción
+forecast_prophet <- predict(m_prophet, future)
+
+# 5. Graficar el pronóstico
+plot(m_prophet, forecast_prophet, 
+     main = "Pronóstico del Flujo Vehicular con Prophet")
+```
+
+
+## Análisis de Componentes
+
+```{r, echo=FALSE, message=FALSE, warning = FALSE}
+# Graficar los componentes del modelo
+# (Tendencia, Estacionalidad Diaria)
+prophet_plot_components(m_prophet, forecast_prophet)
+```
+
+* (Tendencia - $g(t)$):
+
+Muestra la tendencia subyacente a largo plazo del flujo vehicular, una vez eliminadas las fluctuaciones diarias. Podemos observar que el flujo base (el valor promedio) aumentó constantemente desde enero hasta aproximadamente abril.
+
+* (Estacionalidad Diaria - $s(t)$):
+
+Muestra el patrón promedio de 24 horas y revela una estructura bimodal (de dos picos):
+Valle Profundo: El flujo vehicular cae a su mínimo absoluto en la madrugada, alrededor de las 3:00 - 4:00 AM, donde resta casi 100 unidades al flujo base.
+Pico Matutino: Hay un fuerte pico de "hora pico" matutina que alcanza su máximo alrededor de las 9:00 - 10:00 AM (añadiendo ~50 unidades).
+Pico Vespertino: Se produce un segundo pico, más alto que el matutino, que alcanza su máximo alrededor de las 3:00 PM (15:00) (añadiendo ~60-70 unidades).Descenso: Después de las 3 PM, el flujo comienza un descenso constante durante el resto de la tarde y noche.

@@ -45,3 +45,6 @@ modelo-sarima-metodología-box-jenkins
 establecimiento-de-órdenes-de-diferenciación
 interpretación-de-residuales
 predicción
+capitulo-6
+modelo-prophet
+análisis-de-componentes
