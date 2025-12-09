@@ -1,0 +1,195 @@
+# Capitulo 7
+
+## Redes Neuronales Recurrentes (Elman y Jordan)
+
+## Preparación de Datos y Normalización
+
+Las redes neuronales son extremadamente sensibles a la escala de los datos. Dado que utilizan funciones de activación (como la logística o tangente hiperbólica) que saturan fuera de rangos específicos (0 a 1, o -1 a 1), es obligatorio normalizar la serie temporal antes del entrenamiento. 
+
+```{r, echo=FALSE, message=FALSE, warning = FALSE}
+# Cargar librerías
+library(tidyverse)
+library(lubridate)
+library(RSNNS)     
+library(quantmod)  
+
+
+data_file <- "./data/hourly_aggregated_data.csv"
+data_raw <- read_csv(data_file)
+
+data_clean <- data_raw %>%
+  rename(Timestamp = Timestamp, FlujoTotal = TotalFlow) %>%
+  mutate(
+    Timestamp = ymd_hms(Timestamp),
+    FlujoTotal = as.numeric(FlujoTotal)
+  ) %>%
+  drop_na(FlujoTotal) %>%
+  select(Timestamp, FlujoTotal)
+
+# 1. Normalización Min-Max (Escalar a rango [0, 1])
+max_val <- max(data_clean$FlujoTotal)
+min_val <- min(data_clean$FlujoTotal)
+
+data_normalized <- (data_clean$FlujoTotal - min_val) / (max_val - min_val)
+
+# 2. Construcción de la Matriz de Características (Lags)
+# Para una RNN, necesitamos definir explícitamente qué "pasos atrás" ve la red.
+# Usaremos: 
+# - Lag 1 (hora anterior)
+# - Lag 2 (dos horas atrás)
+# - Lag 24 (el mismo momento ayer - Estacionalidad Diaria)
+
+inputs <- data.frame(
+  Lag1  = Lag(data_normalized, 1),
+  Lag2  = Lag(data_normalized, 2),
+  Lag24 = Lag(data_normalized, 24)
+)
+
+# El target es el valor actual
+target <- data_normalized
+
+# Combinar y limpiar NAs generados por los lags
+dataset_nn <- cbind(inputs, target) %>% drop_na()
+
+# 3. División Train / Test
+# Reservamos las últimas 48 horas para validación (como en caps anteriores)
+test_size <- 48
+train_size <- nrow(dataset_nn) - test_size
+
+inputs_train <- dataset_nn[1:train_size, 1:3]
+target_train <- dataset_nn[1:train_size, 4]
+
+inputs_test  <- dataset_nn[(train_size + 1):nrow(dataset_nn), 1:3]
+target_test  <- dataset_nn[(train_size + 1):nrow(dataset_nn), 4]
+
+cat("Datos de entrenamiento:", nrow(inputs_train), "observaciones.\n")
+cat("Datos de prueba:", nrow(inputs_test), "observaciones.\n")
+```
+
+
+## Red Neuronal de Elman
+
+La red de Elman se entrena para minimizar el error cuadrático medio. Configuraremos una capa oculta con un tamaño arbitrario (ej. 10 neuronas). La elección de hiperparámetros (tasa de aprendizaje, iteraciones) es crucial.
+
+Entradas: Lags 1, 2, 24.
+
+Contexto: Realimentación de la capa oculta.
+
+Salida: Flujo vehicular (normalizado).
+
+```{r, echo=FALSE, message=FALSE, warning = FALSE}
+# Fijar semilla para reproducibilidad
+set.seed(123)
+
+# Entrenamiento del modelo Elman
+# size: Número de neuronas en la capa oculta
+# learnFuncParams: Tasa de aprendizaje
+# maxit: Número máximo de iteraciones (épocas)
+model_elman <- elman(
+  x = inputs_train,
+  y = target_train,
+  size = c(10), 
+  learnFuncParams = c(0.1),
+  maxit = 1000,
+  inputsTest = inputs_test,
+  targetsTest = target_test,
+  linOut = TRUE # Salida lineal (necesario para regresión continua)
+)
+
+# Visualizar la convergencia del error
+plotIterativeError(model_elman, main = "Convergencia del Error: Red Elman")
+```
+
+El gráfico muestra una caída inicial rápida, seguida de una inestabilidad significativa alrededor de la iteración 100-150 . Este comportamiento es característico de las redes de Elman. Dado que las unidades de contexto copian el estado de la capa oculta, los gradientes pueden volverse volátiles causando oscilaciones temporales antes de que la red logre estabilizarse nuevamente hacia la iteración 300. A pesar de la inestabilidad, la red logró recuperar el rumbo y converger a un error bajo.
+
+
+## Red Neuronal de Jordan
+
+La red de Jordan es similar, pero su memoria proviene de la salida. Esto la hace comportarse a menudo de manera más estable, similar a un modelo de media móvil suavizada, aunque a veces con menos capacidad para cambios abruptos que la de Elman.
+```{r, echo=FALSE, message=FALSE, warning = FALSE}
+
+set.seed(123)
+
+# Entrenamiento del modelo Jordan
+model_jordan <- jordan(
+  x = inputs_train,
+  y = target_train,
+  size = c(10),
+  learnFuncParams = c(0.1),
+  maxit = 1000,
+  inputsTest = inputs_test,
+  targetsTest = target_test,
+  linOut = TRUE
+)
+
+# Visualizar la convergencia del error
+plotIterativeError(model_jordan, main = "Convergencia del Error: Red Jordan")
+```
+
+La red de Jordan exhibe una convergencia monótona y estable. Esto se debe a que las unidades de contexto se alimentan de la capa de salida. Como la salida es el objetivo (flujo vehicular normalizado) y es inherentemente más estable que los estados internos ocultos, el proceso de aprendizaje es más suave, actuando casi como un suavizamiento exponencial adaptativo..
+
+```{r, echo=FALSE, message=FALSE, warning = FALSE}
+# 1. Generar predicciones (ya se calcularon internamente, pero extraemos explícitamente)
+pred_elman_norm <- predict(model_elman, inputs_test)
+pred_jordan_norm <- predict(model_jordan, inputs_test)
+
+# 2. Función para desnormalizar
+denormalize <- function(x, min_val, max_val) {
+  return(x * (max_val - min_val) + min_val)
+}
+
+# 3. Convertir a escala original
+pred_elman_real <- denormalize(pred_elman_norm, min_val, max_val)
+pred_jordan_real <- denormalize(pred_jordan_norm, min_val, max_val)
+actual_real <- denormalize(target_test, min_val, max_val)
+
+# 4. Crear dataframe de comparación
+results_nn <- data.frame(
+  Hora = 1:length(actual_real),
+  Real = actual_real,
+  Elman = pred_elman_real,
+  Jordan = pred_jordan_real
+)
+
+# Visualización comparativa
+ggplot(results_nn, aes(x = Hora)) +
+  geom_line(aes(y = Real, color = "Real"), size = 1) +
+  geom_line(aes(y = Elman, color = "Elman (RNN)"), linetype = "dashed") +
+  geom_line(aes(y = Jordan, color = "Jordan (RNN)"), linetype = "dotted") +
+  labs(title = "Comparación de Pronósticos: Elman vs Jordan vs Real",
+       y = "Flujo Vehicular", x = "Horas (Conjunto de Prueba)") +
+  theme_minimal() +
+  scale_color_manual(values = c("Real" = "black", "Elman (RNN)" = "blue", "Jordan (RNN)" = "red"))
+```
+
+El gráfico comparativo "Elman vs Jordan vs Real" ofrece una validación cualitativa crucial sobre el conjunto de prueba (las últimas 48 horas):
+
+Captura de Patrones: Ambas redes logran capturar la estacionalidad diaria bimodal (el pico de la mañana y el pico de la tarde) que caracterizamos en el capítulo anterior con Prophet.
+
+Precisión en Picos:
+
+La Red de Elman (Línea Azul Discontinua) muestra un ajuste excepcional. Se adhiere casi perfectamente a la línea negra (Real), capturando tanto la magnitud de los picos como la profundidad de los valles nocturnos.
+
+La Red de Jordan (Línea Roja Punteada) tiende a sobreestimar los picos. Se observa claramente alrededor de la hora 8-10 y la hora 35-40, donde la línea roja predice un flujo mayor al real. Esto sugiere que la realimentación de la salida crea un efecto de "inercia" o momentum: si la red predice un valor alto, esa predicción alimenta la siguiente, empujando el pronóstico hacia arriba excesivamente.
+
+Finalmente, calculamos las métricas de error (RMSE y MAPE) para comparar objetivamente ambas arquitecturas.
+
+```{r, echo=FALSE, message=FALSE, warning = FALSE}
+
+# Función auxiliar para métricas
+calculate_metrics <- function(actual, predicted, model_name) {
+  rmse <- sqrt(mean((actual - predicted)^2))
+  mape <- mean(abs((actual - predicted) / actual)) * 100
+  cat(paste0("--- ", model_name, " ---\n"))
+  cat("RMSE:", round(rmse, 2), "\n")
+  cat("MAPE:", round(mape, 2), "%\n\n")
+}
+
+calculate_metrics(results_nn$Real, results_nn$Elman, "Red de Elman")
+calculate_metrics(results_nn$Real, results_nn$Jordan, "Red de Jordan")
+
+```
+
+La arquitectura de Elman superó significativamente a la de Jordan, reduciendo el error porcentual (MAPE) del 8.82% al 5.37%. Un MAPE cercano al 5% es un resultado excelente en pronóstico de tráfico.El éxito de Elman sugiere que la dinámica del flujo vehicular depende de factores latentes complejos que no son visibles directamente en la salida anterior.
+
+Si recordamos los resultados de SARIMA (MAPE ~15-20% en versiones iniciales) y Prophet, la Red de Elman se posiciona como el modelo más preciso hasta el momento. Esto valida la hipótesis planteada al inicio del capítulo: el flujo vehicular es un sistema dinámico no lineal que se beneficia más de una arquitectura de "memoria profunda" (RNN) que de modelos puramente estadísticos o de regresión aditiva.

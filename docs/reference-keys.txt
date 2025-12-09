@@ -1,4 +1,3 @@
-tab:unnamed-chunk-1
 acerca
 introducción
 conjunto-de-datos-flujo-vehicular
@@ -49,3 +48,9 @@ capitulo-6
 modelo-prophet
 pronostico-prophet
 análisis-de-componentes
+capitulo-7
+redes-neuronales-recurrentes-elman-y-jordan
+preparación-de-datos-y-normalización
+red-neuronal-de-elman
+red-neuronal-de-jordan
+tab:unnamed-chunk-1

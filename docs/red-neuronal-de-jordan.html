@@ -4,18 +4,18 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>Análisis Series de Tiempo de un conjunto de datos de tráfico</title>
+  <title>9 Red Neuronal de Jordan | Análisis Series de Tiempo de un conjunto de datos de tráfico</title>
   <meta name="description" content="Durante el curso de Análisis de Series de Tiempo se trabajará con una base de datos desarrollada por el Departamento de Transporte de California (Caltrans) a través del software conocido como Performance Measurement System (PeMS). En esta base de datos se recopila información de forma continua, registrando los datos del tráfico vehicular a través de sensores instalados en diferentes vías de California, US." />
   <meta name="generator" content="bookdown 0.42 and GitBook 2.6.7" />
 
-  <meta property="og:title" content="Análisis Series de Tiempo de un conjunto de datos de tráfico" />
+  <meta property="og:title" content="9 Red Neuronal de Jordan | Análisis Series de Tiempo de un conjunto de datos de tráfico" />
   <meta property="og:type" content="book" />
   
   <meta property="og:description" content="Durante el curso de Análisis de Series de Tiempo se trabajará con una base de datos desarrollada por el Departamento de Transporte de California (Caltrans) a través del software conocido como Performance Measurement System (PeMS). En esta base de datos se recopila información de forma continua, registrando los datos del tráfico vehicular a través de sensores instalados en diferentes vías de California, US." />
   <meta name="github-repo" content="g6seriesdetiempo-ux/PEMSTrafficdata" />
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="Análisis Series de Tiempo de un conjunto de datos de tráfico" />
+  <meta name="twitter:title" content="9 Red Neuronal de Jordan | Análisis Series de Tiempo de un conjunto de datos de tráfico" />
   
   <meta name="twitter:description" content="Durante el curso de Análisis de Series de Tiempo se trabajará con una base de datos desarrollada por el Departamento de Transporte de California (Caltrans) a través del software conocido como Performance Measurement System (PeMS). En esta base de datos se recopila información de forma continua, registrando los datos del tráfico vehicular a través de sensores instalados en diferentes vías de California, US." />
   
@@ -30,8 +30,8 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black" />
   
   
+<link rel="prev" href="capitulo-7.html"/>
 
-<link rel="next" href="introducción.html"/>
 <script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
@@ -52,14 +52,6 @@
 <link href="libs/anchor-sections-1.1.0/anchor-sections.css" rel="stylesheet" />
 <link href="libs/anchor-sections-1.1.0/anchor-sections-hash.css" rel="stylesheet" />
 <script src="libs/anchor-sections-1.1.0/anchor-sections.js"></script>
-<link href="libs/htmltools-fill-0.5.8.1/fill.css" rel="stylesheet" />
-<script src="libs/htmlwidgets-1.6.4/htmlwidgets.js"></script>
-<script src="libs/plotly-binding-4.10.4/plotly.js"></script>
-<script src="libs/typedarray-0.1/typedarray.min.js"></script>
-<link href="libs/crosstalk-1.2.1/css/crosstalk.min.css" rel="stylesheet" />
-<script src="libs/crosstalk-1.2.1/js/crosstalk.min.js"></script>
-<link href="libs/plotly-htmlwidgets-css-2.11.1/plotly-htmlwidgets.css" rel="stylesheet" />
-<script src="libs/plotly-main-2.11.1/plotly-latest.min.js"></script>
 
 
 
@@ -85,89 +77,89 @@
 
 <li class="divider"></li>
 <li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> Acerca</a></li>
-<li class="chapter" data-level="2" data-path="index.html"><a href="#introducci%C3%B3n"><i class="fa fa-check"></i><b>2</b> Introducción</a>
+<li class="chapter" data-level="2" data-path="07_Capitulo_7.html"><a href="#introducci%C3%B3n"><i class="fa fa-check"></i><b>2</b> Introducción</a>
 <ul>
 <li class="chapter" data-level="2.1" data-path="introducción.html"><a href="introducción.html"><i class="fa fa-check"></i><b>2.1</b> Conjunto de Datos Flujo Vehicular</a></li>
 <li class="chapter" data-level="2.2" data-path="introducción.html"><a href="introducción.html#fuentes-y-permisos-de-uso"><i class="fa fa-check"></i><b>2.2</b> Fuentes y Permisos de Uso</a></li>
 </ul></li>
-<li class="chapter" data-level="3" data-path="index.html"><a href="#visualizaci%C3%B3n-y-an%C3%A1lisis-exploratorio-de-datos"><i class="fa fa-check"></i><b>3</b> Visualización y Análisis Exploratorio de Datos</a>
+<li class="chapter" data-level="3" data-path="07_Capitulo_7.html"><a href="#visualizaci%C3%B3n-y-an%C3%A1lisis-exploratorio-de-datos"><i class="fa fa-check"></i><b>3</b> Visualización y Análisis Exploratorio de Datos</a>
 <ul>
-<li class="chapter" data-level="3.1" data-path="index.html"><a href="#preprocesamiento-de-datos-de-series-temporales-de-tr%C3%A1fico"><i class="fa fa-check"></i><b>3.1</b> Preprocesamiento de Datos de Series Temporales de Tráfico</a></li>
-<li class="chapter" data-level="3.2" data-path="index.html"><a href="#integraci%C3%B3n-y-estructuraci%C3%B3n-de-datos"><i class="fa fa-check"></i><b>3.2</b> Integración y Estructuración de Datos</a>
+<li class="chapter" data-level="3.1" data-path="07_Capitulo_7.html"><a href="#preprocesamiento-de-datos-de-series-temporales-de-tr%C3%A1fico"><i class="fa fa-check"></i><b>3.1</b> Preprocesamiento de Datos de Series Temporales de Tráfico</a></li>
+<li class="chapter" data-level="3.2" data-path="07_Capitulo_7.html"><a href="#integraci%C3%B3n-y-estructuraci%C3%B3n-de-datos"><i class="fa fa-check"></i><b>3.2</b> Integración y Estructuración de Datos</a>
 <ul>
-<li class="chapter" data-level="3.2.1" data-path="index.html"><a href="#concatenaci%C3%B3n-de-archivos"><i class="fa fa-check"></i><b>3.2.1</b> Concatenación de Archivos</a></li>
-<li class="chapter" data-level="3.2.2" data-path="index.html"><a href="#estandarizaci%C3%B3n-de-cabeceras"><i class="fa fa-check"></i><b>3.2.2</b> 2 Estandarización de Cabeceras</a></li>
+<li class="chapter" data-level="3.2.1" data-path="07_Capitulo_7.html"><a href="#concatenaci%C3%B3n-de-archivos"><i class="fa fa-check"></i><b>3.2.1</b> Concatenación de Archivos</a></li>
+<li class="chapter" data-level="3.2.2" data-path="07_Capitulo_7.html"><a href="#estandarizaci%C3%B3n-de-cabeceras"><i class="fa fa-check"></i><b>3.2.2</b> 2 Estandarización de Cabeceras</a></li>
 </ul></li>
-<li class="chapter" data-level="3.3" data-path="index.html"><a href="#diagn%C3%B3stico-y-limpieza-de-datos"><i class="fa fa-check"></i><b>3.3</b> Diagnóstico y Limpieza de Datos</a>
+<li class="chapter" data-level="3.3" data-path="07_Capitulo_7.html"><a href="#diagn%C3%B3stico-y-limpieza-de-datos"><i class="fa fa-check"></i><b>3.3</b> Diagnóstico y Limpieza de Datos</a>
 <ul>
-<li class="chapter" data-level="3.3.1" data-path="index.html"><a href="#b-an%C3%A1lisis-del-mecanismo-de-datos-faltantes-mdm"><i class="fa fa-check"></i><b>3.3.1</b> B Análisis del Mecanismo de Datos Faltantes (MDM)</a></li>
-<li class="chapter" data-level="3.3.2" data-path="index.html"><a href="#clasificaci%C3%B3n-del-mecanismo"><i class="fa fa-check"></i><b>3.3.2</b> Clasificación del Mecanismo</a></li>
+<li class="chapter" data-level="3.3.1" data-path="07_Capitulo_7.html"><a href="#b-an%C3%A1lisis-del-mecanismo-de-datos-faltantes-mdm"><i class="fa fa-check"></i><b>3.3.1</b> B Análisis del Mecanismo de Datos Faltantes (MDM)</a></li>
+<li class="chapter" data-level="3.3.2" data-path="07_Capitulo_7.html"><a href="#clasificaci%C3%B3n-del-mecanismo"><i class="fa fa-check"></i><b>3.3.2</b> Clasificación del Mecanismo</a></li>
 <li class="chapter" data-level="3.3.3" data-path="visualización-y-análisis-exploratorio-de-datos.html"><a href="visualización-y-análisis-exploratorio-de-datos.html"><i class="fa fa-check"></i><b>3.3.3</b> Estrategias de Filtrado</a></li>
 <li class="chapter" data-level="3.3.4" data-path="visualización-y-análisis-exploratorio-de-datos.html"><a href="visualización-y-análisis-exploratorio-de-datos.html#sesgo-residual-potencial"><i class="fa fa-check"></i><b>3.3.4</b> Sesgo Residual Potencial</a></li>
 </ul></li>
-<li class="chapter" data-level="3.4" data-path="index.html"><a href="#agregaci%C3%B3n-temporal-y-reducci%C3%B3n-dimensional"><i class="fa fa-check"></i><b>3.4</b> Agregación Temporal y Reducción Dimensional</a>
+<li class="chapter" data-level="3.4" data-path="07_Capitulo_7.html"><a href="#agregaci%C3%B3n-temporal-y-reducci%C3%B3n-dimensional"><i class="fa fa-check"></i><b>3.4</b> Agregación Temporal y Reducción Dimensional</a>
 <ul>
-<li class="chapter" data-level="3.4.1" data-path="index.html"><a href="#transformaci%C3%B3n-de-granularidad-temporal"><i class="fa fa-check"></i><b>3.4.1</b> Transformación de Granularidad Temporal</a></li>
-<li class="chapter" data-level="3.4.2" data-path="index.html"><a href="#estad%C3%ADsticas-de-agregaci%C3%B3n"><i class="fa fa-check"></i><b>3.4.2</b> Estadísticas de Agregación</a></li>
-<li class="chapter" data-level="3.4.3" data-path="index.html"><a href="#evaluaci%C3%B3n-estad%C3%ADstica-media-vs.-mediana"><i class="fa fa-check"></i><b>3.4.3</b> Evaluación Estadística: Media vs. Mediana</a></li>
-<li class="chapter" data-level="3.4.4" data-path="index.html"><a href="#resultados-de-asimetr%C3%ADa-gamma_1-datos-5-min"><i class="fa fa-check"></i><b>3.4.4</b> Resultados de Asimetría (<span class="math inline">\(\gamma_1\)</span>) (Datos 5-min)</a></li>
-<li class="chapter" data-level="3.4.5" data-path="index.html"><a href="#diferencias-emp%C3%ADricas-agregados-horarios"><i class="fa fa-check"></i><b>3.4.5</b> Diferencias Empíricas (Agregados Horarios)</a></li>
+<li class="chapter" data-level="3.4.1" data-path="07_Capitulo_7.html"><a href="#transformaci%C3%B3n-de-granularidad-temporal"><i class="fa fa-check"></i><b>3.4.1</b> Transformación de Granularidad Temporal</a></li>
+<li class="chapter" data-level="3.4.2" data-path="07_Capitulo_7.html"><a href="#estad%C3%ADsticas-de-agregaci%C3%B3n"><i class="fa fa-check"></i><b>3.4.2</b> Estadísticas de Agregación</a></li>
+<li class="chapter" data-level="3.4.3" data-path="07_Capitulo_7.html"><a href="#evaluaci%C3%B3n-estad%C3%ADstica-media-vs.-mediana"><i class="fa fa-check"></i><b>3.4.3</b> Evaluación Estadística: Media vs. Mediana</a></li>
+<li class="chapter" data-level="3.4.4" data-path="07_Capitulo_7.html"><a href="#resultados-de-asimetr%C3%ADa-gamma_1-datos-5-min"><i class="fa fa-check"></i><b>3.4.4</b> Resultados de Asimetría (<span class="math inline">\(\gamma_1\)</span>) (Datos 5-min)</a></li>
+<li class="chapter" data-level="3.4.5" data-path="07_Capitulo_7.html"><a href="#diferencias-emp%C3%ADricas-agregados-horarios"><i class="fa fa-check"></i><b>3.4.5</b> Diferencias Empíricas (Agregados Horarios)</a></li>
 </ul></li>
 <li class="chapter" data-level="3.5" data-path="visualización-y-análisis-exploratorio-de-datos.html"><a href="visualización-y-análisis-exploratorio-de-datos.html#limitaciones-y-supuestos"><i class="fa fa-check"></i><b>3.5</b> Limitaciones y Supuestos</a>
 <ul>
-<li class="chapter" data-level="3.5.1" data-path="index.html"><a href="#supuestos-impl%C3%ADcitos"><i class="fa fa-check"></i><b>3.5.1</b> Supuestos Implícitos</a></li>
-<li class="chapter" data-level="3.5.2" data-path="index.html"><a href="#p%C3%A9rdidas-de-informaci%C3%B3n-documentadas"><i class="fa fa-check"></i><b>3.5.2</b> Pérdidas de Información Documentadas</a></li>
+<li class="chapter" data-level="3.5.1" data-path="07_Capitulo_7.html"><a href="#supuestos-impl%C3%ADcitos"><i class="fa fa-check"></i><b>3.5.1</b> Supuestos Implícitos</a></li>
+<li class="chapter" data-level="3.5.2" data-path="07_Capitulo_7.html"><a href="#p%C3%A9rdidas-de-informaci%C3%B3n-documentadas"><i class="fa fa-check"></i><b>3.5.2</b> Pérdidas de Información Documentadas</a></li>
 <li class="chapter" data-level="3.5.3" data-path="visualización-y-análisis-exploratorio-de-datos.html"><a href="visualización-y-análisis-exploratorio-de-datos.html#sesgos-no-cuantificados"><i class="fa fa-check"></i><b>3.5.3</b> Sesgos No Cuantificados</a></li>
 </ul></li>
 <li class="chapter" data-level="3.6" data-path="visualización-y-análisis-exploratorio-de-datos.html"><a href="visualización-y-análisis-exploratorio-de-datos.html#comportamiento-del-flujo-vehicular-en-el-tiempo"><i class="fa fa-check"></i><b>3.6</b> Comportamiento del flujo vehicular en el tiempo</a></li>
-<li class="chapter" data-level="3.7" data-path="index.html"><a href="#distribuci%C3%B3n-de-la-velocidad-promedio-por-hora"><i class="fa fa-check"></i><b>3.7</b> Distribución de la velocidad promedio por hora</a></li>
-<li class="chapter" data-level="3.8" data-path="index.html"><a href="#diagrama-de-dispersi%C3%B3n-del-flujo-vehicular-vs-velocidad-promedio"><i class="fa fa-check"></i><b>3.8</b> Diagrama de dispersión del flujo vehicular vs velocidad promedio</a></li>
+<li class="chapter" data-level="3.7" data-path="07_Capitulo_7.html"><a href="#distribuci%C3%B3n-de-la-velocidad-promedio-por-hora"><i class="fa fa-check"></i><b>3.7</b> Distribución de la velocidad promedio por hora</a></li>
+<li class="chapter" data-level="3.8" data-path="07_Capitulo_7.html"><a href="#diagrama-de-dispersi%C3%B3n-del-flujo-vehicular-vs-velocidad-promedio"><i class="fa fa-check"></i><b>3.8</b> Diagrama de dispersión del flujo vehicular vs velocidad promedio</a></li>
 </ul></li>
-<li class="chapter" data-level="4" data-path="index.html"><a href="#cap%C3%ADtulo-3"><i class="fa fa-check"></i><b>4</b> Capítulo 3</a>
+<li class="chapter" data-level="4" data-path="07_Capitulo_7.html"><a href="#cap%C3%ADtulo-3"><i class="fa fa-check"></i><b>4</b> Capítulo 3</a>
 <ul>
-<li class="chapter" data-level="4.1" data-path="index.html"><a href="#descomposici%C3%B3n-de-la-serie-temporal"><i class="fa fa-check"></i><b>4.1</b> Descomposición de la Serie Temporal</a></li>
-<li class="chapter" data-level="4.2" data-path="index.html"><a href="#estacionariedad-y-diferenciaci%C3%B3n"><i class="fa fa-check"></i><b>4.2</b> Estacionariedad y Diferenciación</a>
+<li class="chapter" data-level="4.1" data-path="07_Capitulo_7.html"><a href="#descomposici%C3%B3n-de-la-serie-temporal"><i class="fa fa-check"></i><b>4.1</b> Descomposición de la Serie Temporal</a></li>
+<li class="chapter" data-level="4.2" data-path="07_Capitulo_7.html"><a href="#estacionariedad-y-diferenciaci%C3%B3n"><i class="fa fa-check"></i><b>4.2</b> Estacionariedad y Diferenciación</a>
 <ul>
 <li class="chapter" data-level="4.2.1" data-path="capítulo-3.html"><a href="capítulo-3.html"><i class="fa fa-check"></i><b>4.2.1</b> Test KPSS (Kwiatkowski-Phillips-Schmidt-Shin)</a></li>
-<li class="chapter" data-level="4.2.2" data-path="index.html"><a href="#diferenciaci%C3%B3n-estacional"><i class="fa fa-check"></i><b>4.2.2</b> Diferenciación Estacional</a></li>
-<li class="chapter" data-level="4.2.3" data-path="index.html"><a href="#confirmaci%C3%B3n-de-estacionariedad"><i class="fa fa-check"></i><b>4.2.3</b> Confirmación de Estacionariedad</a></li>
+<li class="chapter" data-level="4.2.2" data-path="07_Capitulo_7.html"><a href="#diferenciaci%C3%B3n-estacional"><i class="fa fa-check"></i><b>4.2.2</b> Diferenciación Estacional</a></li>
+<li class="chapter" data-level="4.2.3" data-path="07_Capitulo_7.html"><a href="#confirmaci%C3%B3n-de-estacionariedad"><i class="fa fa-check"></i><b>4.2.3</b> Confirmación de Estacionariedad</a></li>
 </ul></li>
 </ul></li>
-<li class="chapter" data-level="5" data-path="index.html"><a href="#cap%C3%ADtulo-4"><i class="fa fa-check"></i><b>5</b> Capítulo 4</a>
+<li class="chapter" data-level="5" data-path="07_Capitulo_7.html"><a href="#cap%C3%ADtulo-4"><i class="fa fa-check"></i><b>5</b> Capítulo 4</a>
 <ul>
-<li class="chapter" data-level="5.1" data-path="index.html"><a href="#fundamentaci%C3%B3n-metodol%C3%B3gica"><i class="fa fa-check"></i><b>5.1</b> Fundamentación Metodológica</a>
+<li class="chapter" data-level="5.1" data-path="07_Capitulo_7.html"><a href="#fundamentaci%C3%B3n-metodol%C3%B3gica"><i class="fa fa-check"></i><b>5.1</b> Fundamentación Metodológica</a>
 <ul>
 <li class="chapter" data-level="5.1.1" data-path="capítulo-4.html"><a href="capítulo-4.html"><i class="fa fa-check"></i><b>5.1.1</b> Modelos Aditivos vs. Multiplicativos</a></li>
 </ul></li>
-<li class="chapter" data-level="5.2" data-path="index.html"><a href="#estimaci%C3%B3n-del-modelo"><i class="fa fa-check"></i><b>5.2</b> Estimación del Modelo</a>
+<li class="chapter" data-level="5.2" data-path="07_Capitulo_7.html"><a href="#estimaci%C3%B3n-del-modelo"><i class="fa fa-check"></i><b>5.2</b> Estimación del Modelo</a>
 <ul>
-<li class="chapter" data-level="5.2.1" data-path="index.html"><a href="#confirmaci%C3%B3n-cuantitativa-de-la-estacionalidad"><i class="fa fa-check"></i><b>5.2.1</b> Confirmación Cuantitativa de la Estacionalidad</a></li>
+<li class="chapter" data-level="5.2.1" data-path="07_Capitulo_7.html"><a href="#confirmaci%C3%B3n-cuantitativa-de-la-estacionalidad"><i class="fa fa-check"></i><b>5.2.1</b> Confirmación Cuantitativa de la Estacionalidad</a></li>
 <li class="chapter" data-level="5.2.2" data-path="capítulo-4.html"><a href="capítulo-4.html#nivel1-operadores-estacionales"><i class="fa fa-check"></i><b>5.2.2</b> Nivel 1: Operadores Estacionales</a></li>
 <li class="chapter" data-level="5.2.3" data-path="capítulo-4.html"><a href="capítulo-4.html#nivel2-operadores-no-estacionales"><i class="fa fa-check"></i><b>5.2.3</b> Nivel 2: Operadores No Estacionales</a></li>
 </ul></li>
 </ul></li>
 <li class="chapter" data-level="6" data-path="capitulo-5.html"><a href="capitulo-5.html"><i class="fa fa-check"></i><b>6</b> Capitulo 5</a>
 <ul>
-<li class="chapter" data-level="6.1" data-path="index.html"><a href="#modelo-sarima-metodolog%C3%ADa-box-jenkins"><i class="fa fa-check"></i><b>6.1</b> Modelo SARIMA (Metodología Box-Jenkins)</a>
+<li class="chapter" data-level="6.1" data-path="07_Capitulo_7.html"><a href="#modelo-sarima-metodolog%C3%ADa-box-jenkins"><i class="fa fa-check"></i><b>6.1</b> Modelo SARIMA (Metodología Box-Jenkins)</a>
 <ul>
-<li class="chapter" data-level="6.1.1" data-path="index.html"><a href="#establecimiento-de-%C3%B3rdenes-de-diferenciaci%C3%B3n"><i class="fa fa-check"></i><b>6.1.1</b> Establecimiento de Órdenes de Diferenciación</a></li>
+<li class="chapter" data-level="6.1.1" data-path="07_Capitulo_7.html"><a href="#establecimiento-de-%C3%B3rdenes-de-diferenciaci%C3%B3n"><i class="fa fa-check"></i><b>6.1.1</b> Establecimiento de Órdenes de Diferenciación</a></li>
 </ul></li>
-<li class="chapter" data-level="6.2" data-path="index.html"><a href="#interpretaci%C3%B3n-de-residuales"><i class="fa fa-check"></i><b>6.2</b> Interpretación de Residuales</a></li>
-<li class="chapter" data-level="6.3" data-path="index.html"><a href="#predicci%C3%B3n"><i class="fa fa-check"></i><b>6.3</b> Predicción</a></li>
+<li class="chapter" data-level="6.2" data-path="07_Capitulo_7.html"><a href="#interpretaci%C3%B3n-de-residuales"><i class="fa fa-check"></i><b>6.2</b> Interpretación de Residuales</a></li>
+<li class="chapter" data-level="6.3" data-path="07_Capitulo_7.html"><a href="#predicci%C3%B3n"><i class="fa fa-check"></i><b>6.3</b> Predicción</a></li>
 </ul></li>
 <li class="chapter" data-level="7" data-path="capitulo-6.html"><a href="capitulo-6.html"><i class="fa fa-check"></i><b>7</b> Capitulo 6</a>
 <ul>
 <li class="chapter" data-level="7.1" data-path="capitulo-6.html"><a href="capitulo-6.html#modelo-prophet"><i class="fa fa-check"></i><b>7.1</b> Modelo Prophet</a></li>
 <li class="chapter" data-level="7.2" data-path="capitulo-6.html"><a href="capitulo-6.html#pronostico-prophet"><i class="fa fa-check"></i><b>7.2</b> Pronostico Prophet</a></li>
-<li class="chapter" data-level="7.3" data-path="index.html"><a href="#an%C3%A1lisis-de-componentes"><i class="fa fa-check"></i><b>7.3</b> Análisis de Componentes</a></li>
+<li class="chapter" data-level="7.3" data-path="07_Capitulo_7.html"><a href="#an%C3%A1lisis-de-componentes"><i class="fa fa-check"></i><b>7.3</b> Análisis de Componentes</a></li>
 </ul></li>
 <li class="chapter" data-level="8" data-path="capitulo-7.html"><a href="capitulo-7.html"><i class="fa fa-check"></i><b>8</b> Capitulo 7</a>
 <ul>
 <li class="chapter" data-level="8.1" data-path="capitulo-7.html"><a href="capitulo-7.html#redes-neuronales-recurrentes-elman-y-jordan"><i class="fa fa-check"></i><b>8.1</b> Redes Neuronales Recurrentes (Elman y Jordan)</a></li>
-<li class="chapter" data-level="8.2" data-path="index.html"><a href="#preparaci%C3%B3n-de-datos-y-normalizaci%C3%B3n"><i class="fa fa-check"></i><b>8.2</b> Preparación de Datos y Normalización</a></li>
+<li class="chapter" data-level="8.2" data-path="07_Capitulo_7.html"><a href="#preparaci%C3%B3n-de-datos-y-normalizaci%C3%B3n"><i class="fa fa-check"></i><b>8.2</b> Preparación de Datos y Normalización</a></li>
 <li class="chapter" data-level="8.3" data-path="capitulo-7.html"><a href="capitulo-7.html#red-neuronal-de-elman"><i class="fa fa-check"></i><b>8.3</b> Red Neuronal de Elman</a></li>
-<li class="chapter" data-level="8.4" data-path="capitulo-7.html"><a href="capitulo-7.html#red-neuronal-de-jordan"><i class="fa fa-check"></i><b>8.4</b> Red Neuronal de Jordan</a></li>
 </ul></li>
+<li class="chapter" data-level="9" data-path="red-neuronal-de-jordan.html"><a href="red-neuronal-de-jordan.html"><i class="fa fa-check"></i><b>9</b> Red Neuronal de Jordan</a></li>
 <li class="divider"></li>
 <li><a href="https://github.com/g6seriesdetiempo-ux/PEMSTrafficdata" target="blank">Published with bookdown</a></li>
 
@@ -188,14 +180,23 @@
           <div class="page-inner">
 
             <section class="normal" id="section-">
-<div id="header">
-<h1 class="title">Análisis Series de Tiempo de un conjunto de datos de tráfico</h1>
-<p class="author"><em>Juliana Campo, Ludwig Angel</em></p>
-<p class="date"><em>2025-12-08</em></p>
-</div>
-<div id="acerca" class="section level1 hasAnchor" number="1">
-<h1><span class="header-section-number">1</span> Acerca<a href="index.html#acerca" class="anchor-section" aria-label="Anchor link to header"></a></h1>
-<p>Durante el curso de Análisis de Series de Tiempo se trabajará con una base de datos desarrollada por el Departamento de Transporte de California (Caltrans) a través del software conocido como Performance Measurement System (PeMS). En esta base de datos se recopila información de forma continua, registrando los datos del tráfico vehicular a través de sensores instalados en diferentes vías de California, US.</p>
+<div id="red-neuronal-de-jordan" class="section level1 hasAnchor" number="9">
+<h1><span class="header-section-number">9</span> Red Neuronal de Jordan<a href="red-neuronal-de-jordan.html#red-neuronal-de-jordan" class="anchor-section" aria-label="Anchor link to header"></a></h1>
+<p>La red de Jordan es similar, pero su memoria proviene de la salida. Esto la hace comportarse a menudo de manera más estable, similar a un modelo de media móvil suavizada, aunque a veces con menos capacidad para cambios abruptos que la de Elman.
+<img src="my_gitbook_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
+<p>Una vez entrenados los modelos, generamos las predicciones sobre el conjunto de prueba y, paso crítico, invertimos la normalización para obtener valores interpretables (vehículos/hora).</p>
+<p><img src="my_gitbook_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
+<p>Finalmente, calculamos las métricas de error (RMSE y MAPE) para comparar objetivamente ambas arquitecturas.</p>
+<pre><code>## --- Red de Elman ---
+## RMSE: 4.66 
+## MAPE: 5.37 %</code></pre>
+<pre><code>## --- Red de Jordan ---
+## RMSE: 7.04 
+## MAPE: 8.82 %</code></pre>
+<p>Las redes neuronales recurrentes ofrecen una alternativa poderosa a los modelos lineales.</p>
+<p>La Red de Elman, al tener memoria de su estado interno oculto, tiende a capturar mejor las secuencias complejas y picos abruptos, aunque puede ser más inestable en el entrenamiento.</p>
+<p>La Red de Jordan, al realimentarse de la salida, tiende a producir pronósticos más suaves y estables.</p>
+<p>Si los resultados muestran un MAPE competitivo con respecto a SARIMA (Cap. 5) o Prophet (Cap. 6), esto valida el uso de modelos no lineales. Sin embargo, las redes neuronales a menudo requieren un mayor volumen de datos para superar claramente a los métodos estadísticos clásicos en series univariadas.</p>
 
 </div>
             </section>
@@ -203,8 +204,8 @@
           </div>
         </div>
       </div>
+<a href="capitulo-7.html" class="navigation navigation-prev navigation-unique" aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
 
-<a href="introducción.html" class="navigation navigation-next navigation-unique" aria-label="Next page"><i class="fa fa-angle-right"></i></a>
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>
@@ -235,7 +236,7 @@ gitbook.start({
     "size": 2
   },
   "edit": {
-    "link": "https://github.com/g6seriesdetiempo-ux/PEMSTrafficdata /edit/BRANCH/index.Rmd",
+    "link": "https://github.com/g6seriesdetiempo-ux/PEMSTrafficdata /edit/BRANCH/07_Capitulo_7.Rmd",
     "text": "Edit"
   },
   "history": {
